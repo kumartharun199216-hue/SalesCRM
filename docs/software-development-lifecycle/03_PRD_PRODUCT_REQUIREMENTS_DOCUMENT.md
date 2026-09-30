@@ -189,7 +189,7 @@ Career Apex CRM is a high-speed, candidate-centric sales and placement managemen
 | **NFR-04** | **Usability** | Dense, spreadsheet-style views must allow inline actions within a single click without full-page navigation. |
 | **NFR-05** | **Security** | Role-based route guards and data scoping at the model layer. No unauthorized counselor access to peer student records. |
 | **NFR-06** | **Auditability** | All financial transactions and stage changes must store user ID, timestamp, voucher numbers, and transition reasons. |
-| **NFR-07** | **Browser Compatibility** | Fully functional across modern Chromium (Chrome, Edge, Brave), Firefox, and Safari (desktop & tablet viewports). |
+| **NFR-07** | **Browser & Mobile Responsiveness** | Fully responsive and mobile-friendly across smartphones (320px–480px), tablets (768px–992px), and desktops (1200px+). Includes off-canvas slide drawer navigation with darkened backdrop, swipeable tables with touch inertia, 44px minimum touch targets, and iOS auto-zoom prevention. |
 | **NFR-08** | **Zero-Dependency Runtime** | Prototype must run standalone on any web server or file system without external database or node server dependencies. |
 
 ---
@@ -201,6 +201,7 @@ Career Apex CRM is a high-speed, candidate-centric sales and placement managemen
 3. **Invalid Due Dates:** Milestone due dates cannot be set to a date preceding the student registration date.
 4. **Session Expiry / Direct Access:** If an unauthenticated user opens an internal page (`pages/customers.html`), the route guard intercepts the request and redirects to `index.html`.
 5. **Deletion of Placed Student:** Super administrator receives a high-severity confirmation prompt warning that deleting a placed student permanently removes associated ledger vouchers.
+6. **Mobile Viewport Overflow:** Large Excel spreadsheet views and data tables must maintain touch scrolling without displacing the application header, drawer, or modal structures.
 
 ---
 
@@ -213,3 +214,4 @@ Career Apex CRM is a high-speed, candidate-centric sales and placement managemen
 - [x] Payment recording updates ledger, recalculates balances, and produces printable receipts.
 - [x] Reports provide universal multi-dimensional filters that dynamically refresh charts and tables.
 - [x] Role-based scoping correctly filters data for Admin, Manager, and Counselor.
+- [x] Mobile & Responsive Experience fully certified: slide-in drawer, touch backdrop, swipeable tables, and adaptive filter grids across iPhone, Android, and iPad viewports.
