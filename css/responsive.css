@@ -1,0 +1,126 @@
+/* ==========================================================================
+   SALES CRM - RESPONSIVE CSS
+   Mobile Drawer, Stacked Grids & Adaptive Views
+   ========================================================================== */
+
+/* Laptop & Desktop adjustments */
+@media (max-width: 1200px) {
+  .dashboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .crm-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .crm-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .crm-sidebar-toggle {
+    display: flex;
+  }
+
+  .crm-search-wrapper {
+    width: 220px;
+  }
+
+  .dashboard-grid-equal {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .crm-content {
+    padding: 1.25rem;
+  }
+
+  .form-row {
+    flex-wrap: wrap;
+  }
+
+  .form-col-6,
+  .form-col-4,
+  .form-col-3 {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+}
+
+/* Mobile Screens */
+@media (max-width: 768px) {
+  .crm-header {
+    padding: 0 1rem;
+    height: 56px;
+  }
+
+  .crm-search-wrapper {
+    display: none;
+  }
+
+  .crm-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .crm-page-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem;
+    max-height: 95vh;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1rem;
+  }
+
+  #toast-container {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .toast {
+    min-width: unset;
+    max-width: 100%;
+  }
+
+  .pagination-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .crm-demo-switcher span.switch-label {
+    display: none;
+  }
+}

@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Import Student Job Seekers (Excel / CSV) — Career Apex CRM</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/tables.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- SheetJS Library for Excel (.xlsx, .xls) & CSV parsing -->
+  <script src="../lib/xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      const cdnScript = document.createElement('script');
+      cdnScript.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      document.head.appendChild(cdnScript);
+    }
+  </script>
+
+  <style>
+    .upload-zone {
+      border: 2px dashed var(--slate-300);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem 2rem;
+      text-align: center;
+      background-color: var(--slate-50);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--primary-500);
+      background-color: var(--primary-50);
+    }
+
+    .upload-zone-icon {
+      font-size: 2.5rem;
+      color: var(--primary-600);
+      margin-bottom: 0.75rem;
+    }
+
+    .file-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      border-radius: 9999px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+    }
+
+    .config-card-section {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .config-pill-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-stage-cold {
+      background-color: #ecfeff;
+      color: #0e7490;
+      border: 1px solid #a5f3fc;
+    }
+
+    .table-preview-fixed {
+      font-size: 0.825rem;
+      white-space: nowrap;
+    }
+
+    .table-preview-fixed th {
+      background-color: var(--slate-100);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--slate-600);
+    }
+  </style>
+</head>
+<body>
+  <div class="crm-app-container">
+    <aside class="crm-sidebar" id="crm-sidebar"></aside>
+
+    <div class="crm-main-content">
+      <header class="crm-top-header" id="crm-header"></header>
+
+      <main class="crm-page-body" style="padding: 1.5rem; overflow-y: auto;">
+        <!-- Page Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em;">
+                Bulk Import Student Job Seekers
+              </h1>
+              <span class="badge" style="background-color: #e0f2fe; color: #0284c7; font-weight: 700; border: 1px solid #bae6fd;">
+                <i class="fa-solid fa-file-excel"></i> Excel & CSV Supported
+              </span>
+            </div>
+            <p style="color: var(--slate-500); font-size: 0.875rem; margin-top: 0.25rem;">
+              Ingest raw student databases, campus drive lists, or job portal sheets directly into <strong>Cold Calling (Raw Data)</strong> or any pipeline stage with team assignment.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" id="btn-download-sample-xlsx">
+              <i class="fa-solid fa-file-excel" style="color: #107c41;"></i> Download Sample Excel (.xlsx)
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-download-sample-csv">
+              <i class="fa-solid fa-file-csv" style="color: #0284c7;"></i> Download Sample CSV (.csv)
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-quick-sample-load" style="color: var(--primary-700); background: var(--primary-50); border-color: var(--primary-200);">
+              <i class="fa-solid fa-bolt"></i> Load Sample Raw Data
+            </button>
+            <a href="pipeline.html" class="btn btn-outline btn-sm">
+              <i class="fa-solid fa-table-cells"></i> View Pipeline
+            </a>
+          </div>
+        </div>
+
+        <!-- 1. Destination & Counselor Assignment Configuration Card -->
+        <div class="config-card-section">
+          <div class="config-pill-title">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Step 1: Choose Import Target Pipeline Stage & Team Member Assignment</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
+            <!-- Target Pipeline Stage Selector -->
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 700;">
+                Target Pipeline Stage <span class="required">*</span>
+              </label>
+              <select class="form-select" id="import-target-stage" style="font-weight: 600; border-color: var(--primary-400);">
+                <option value="Cold Calling" selected>❄️ Cold Calling (Raw Data - Uncalled Leads)</option>
+                <option value="New Lead">✨ New Lead (Fresh Candidate Inquiries)</option>
+                <option value="Contacted">📞 Contacted (First Outreach Complete)</option>
+                <option value="Interested">🔥 Interested (Profile & Course Discussed)</option>
+                <option value="Prospect">🎯 Prospect (Shortlisted for Drive / Batch)</option>
+                <option value="Follow-up">⏰ Follow-up (Counseling Callback Scheduled)</option>
+                <option value="Negotiation">🤝 Negotiation (Fee / Scholarship Discussion)</option>
+                <option value="Converted">🏆 Converted (Enrolled / Placed)</option>
+              </select>
+              <div style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.35rem;">
+                <i class="fa-solid fa-circle-info"></i> Raw uncontacted leads go into <strong>Cold Calling</strong> so counselors know they haven't been called yet.
+              </div>
+            </div>
+
+            <!-- Team Member Assignment Dropdown -->
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 700;">
+                Assign To Team Member / Counselor <span class="required">*</span>
+              </label>
+              <select class="form-select" id="import-assign-rep" style="font-weight: 600;">
+                <!-- Populated dynamically based on user role (Admin vs Manager) -->
+              </select>
+              <div style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.35rem;" id="assignment-scope-helper">
+                <!-- Helper text for current role -->
+              </div>
+            </div>
+
+            <!-- Lead Source Tag -->
+            <div class="form-group">
+              <label class="form-label">Lead / Database Source</label>
+              <select class="form-select" id="import-source">
+                <option value="Cold Calling / Raw Database" selected>Cold Calling / Raw Database</option>
+                <option value="Excel / CSV Upload">Excel / CSV Upload</option>
+                <option value="College Placement Cell">College Placement Cell</option>
+                <option value="Walk-in / Campus Drive">Walk-in / Campus Drive</option>
+                <option value="Job Portal / Naukri">Job Portal / Naukri</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Website Inquiry">Website Inquiry</option>
+                <option value="Referral">Referral</option>
+              </select>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-group">
+              <label class="form-label">Default Priority</label>
+              <select class="form-select" id="import-priority">
+                <option value="High">High Priority</option>
+                <option value="Medium" selected>Medium Priority</option>
+                <option value="Low">Low Priority</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Batch Notes / Label -->
+          <div style="margin-top: 0.75rem;">
+            <label class="form-label" style="font-size: 0.8rem;">Batch Note / Campaign Tag (Optional)</label>
+            <input type="text" class="form-control" id="import-batch-note" placeholder="e.g. Pune University 2025 CS Batch - Uncalled Campus Drive Raw Data" style="font-size: 0.85rem;">
+          </div>
+        </div>
+
+        <!-- 2. Upload Zone Card -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+          <div class="config-pill-title" style="margin-bottom: 0.75rem;">
+            <i class="fa-solid fa-file-arrow-up"></i>
+            <span>Step 2: Upload Excel Sheet (.xlsx / .xls) or CSV (.csv) File</span>
+          </div>
+
+          <div class="upload-zone" id="drop-area">
+            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+            <div class="upload-zone-icon">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-900); margin-bottom: 0.35rem;">
+              Click to select or drag & drop student Excel or CSV file
+            </h3>
+            <p style="color: var(--slate-500); font-size: 0.85rem; max-width: 600px; margin: 0 auto 0.75rem;">
+              Works with standard Excel sheets (<strong>.xlsx, .xls</strong>) and <strong>.csv</strong> files.
+            </p>
+            <p style="color: var(--slate-400); font-size: 0.78rem; max-width: 680px; margin: 0 auto 1.25rem;">
+              Auto-maps columns: <code>Name</code>, <code>Mobile</code>, <code>Email</code>, <code>Qualification</code>, <code>College</code>, <code>PassingYear</code>, <code>Skills</code>, <code>TargetRole</code>, <code>Experience</code>, <code>City</code>, <code>State</code>, <code>ExpectedCTC</code>.
+            </p>
+            <button type="button" class="btn btn-primary" id="btn-browse-file">
+              <i class="fa-solid fa-folder-open"></i> Browse Files (.xlsx, .xls, .csv)
+            </button>
+            <div id="selected-file-pill" style="display: none;"></div>
+          </div>
+        </div>
+
+        <!-- 3. Import Results Summary & Preview (Shown after file is read) -->
+        <div id="import-summary-card" class="card" style="display: none; margin-bottom: 1.5rem;">
+          <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <h3 class="card-title"><i class="fa-solid fa-square-poll-vertical"></i> Step 3: Validation & Preview Breakdown</h3>
+            <div id="assignment-preview-pill" style="font-size: 0.825rem; font-weight: 600; color: var(--primary-700); background: var(--primary-50); padding: 0.35rem 0.75rem; border-radius: 9999px; border: 1px solid var(--primary-200);"></div>
+          </div>
+          <div class="card-body">
+            <!-- 4 Metric Badges -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+              <div style="padding: 1rem; border-radius: var(--radius-md); background: var(--slate-100); border: 1px solid var(--border-light);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Total Rows Found</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);" id="stat-total-rows">0</div>
+              </div>
+              <div style="padding: 1rem; border-radius: var(--radius-md); background: var(--success-bg); border: 1px solid var(--success-border);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--success-text); text-transform: uppercase;">Ready to Import</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: var(--success-solid);" id="stat-valid-rows">0</div>
+              </div>
+              <div style="padding: 1rem; border-radius: var(--radius-md); background: var(--warning-bg); border: 1px solid var(--warning-border);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--warning-text); text-transform: uppercase;">Duplicate Mobiles</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: var(--warning-solid);" id="stat-duplicate-rows">0</div>
+              </div>
+              <div style="padding: 1rem; border-radius: var(--radius-md); background: var(--danger-bg); border: 1px solid var(--danger-border);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--danger-text); text-transform: uppercase;">Invalid Rows</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: var(--danger-solid);" id="stat-invalid-rows">0</div>
+              </div>
+            </div>
+
+            <!-- Duplicate Handling Option -->
+            <div style="margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; background: var(--slate-50); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); flex-wrap: wrap; gap: 0.5rem;">
+              <label style="font-size: 0.85rem; font-weight: 600; color: var(--slate-800); display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="chk-skip-duplicates" checked>
+                <span>Skip duplicate mobile numbers (Recommended to protect existing students)</span>
+              </label>
+              <div style="font-size: 0.78rem; color: var(--slate-500);">
+                Mobiles must be 10 digits to be valid.
+              </div>
+            </div>
+
+            <!-- Preview Table -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <div style="font-weight: 700; font-size: 0.95rem; color: var(--slate-900);">
+                Data Preview (First 50 Rows)
+              </div>
+              <div style="font-size: 0.8rem; color: var(--slate-500);">
+                Showing validation and detected candidate fields
+              </div>
+            </div>
+
+            <div class="table-responsive" style="max-height: 380px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+              <table class="table table-preview-fixed">
+                <thead>
+                  <tr>
+                    <th>Row #</th>
+                    <th>Student Name</th>
+                    <th>Mobile</th>
+                    <th>Degree / Qualification</th>
+                    <th>College / University</th>
+                    <th>YOP</th>
+                    <th>Key Skills</th>
+                    <th>Target Role</th>
+                    <th>Location</th>
+                    <th>Assigned To</th>
+                    <th>Target Stage</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="import-preview-tbody"></tbody>
+              </table>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary" id="btn-cancel-import">
+                <i class="fa-solid fa-xmark"></i> Cancel
+              </button>
+              <button class="btn btn-primary" id="btn-confirm-import">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Confirm & Import Valid Students
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/validation.js"></script>
+  <script src="../js/seed-data.js"></script>
+  <script src="../js/users.js"></script>
+  <script src="../js/activities.js"></script>
+  <script src="../js/customers.js"></script>
+  <script src="../js/leads.js"></script>
+  <script src="../js/pipeline.js"></script>
+  <script src="../js/followups.js"></script>
+  <script src="../js/communication.js"></script>
+  <script src="../js/reports.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    let rawParsedRows = [];
+    let validRowsToImport = [];
+    let duplicateRowsList = [];
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      currentUser = Auth.requireAuth(['admin', 'manager']);
+      if (!currentUser) {
+        currentUser = Auth.getCurrentUser();
+      }
+      App.initCommon(currentUser, 'import');
+
+      // Explicitly set target stage default to Cold Calling
+      const targetStageSelect = document.getElementById('import-target-stage');
+      if (targetStageSelect) {
+        targetStageSelect.value = 'Cold Calling';
+      }
+
+      populateAssignmentDropdown();
+      setupUploadZone();
+      setupButtons();
+    });
+
+    /**
+     * Populate Team Member Assignment dropdown based on user role (Admin vs Manager)
+     */
+    function populateAssignmentDropdown() {
+      const repSelect = document.getElementById('import-assign-rep');
+      const helper = document.getElementById('assignment-scope-helper');
+      if (!repSelect) return;
+
+      const user = currentUser || Auth.getCurrentUser();
+      if (!user) return;
+      currentUser = user;
+
+      if (user.role === 'manager') {
+        const teamMembers = Users.getTeamMembers(user.id);
+        if (helper) {
+          helper.innerHTML = `<i class="fa-solid fa-user-tie"></i> Logged in as Manager: <strong>${Utils.escapeHtml(user.name)}</strong>. You can distribute among your team or assign to a specific counselor.`;
+        }
+
+        let options = `
+          <option value="round_robin_team" selected>🔄 Auto Round-Robin (Distribute evenly among my ${teamMembers.length} team counselors)</option>
+          <option value="assign_me">👤 Assign to Me (${Utils.escapeHtml(user.name)})</option>
+          <option value="unassigned">⏳ Leave in Unassigned Queue</option>
+        `;
+
+        if (teamMembers.length > 0) {
+          options += `<optgroup label="My Direct Counselors / Sales Reps">`;
+          teamMembers.forEach(rep => {
+            options += `<option value="${rep.id}">${Utils.escapeHtml(rep.name)} (${rep.id})</option>`;
+          });
+          options += `</optgroup>`;
+        }
+        repSelect.innerHTML = options;
+      } else {
+        // Admin
+        const managers = Users.getManagers();
+        const allReps = Users.getSalespeople();
+        if (helper) {
+          helper.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Logged in as <strong>Admin</strong>. You can distribute across all counseling reps or assign to a specific manager's team.`;
+        }
+
+        let options = `
+          <option value="round_robin_all" selected>🔄 Auto Round-Robin (Distribute across all ${allReps.length} counselors)</option>
+          <option value="unassigned">⏳ Leave in Unassigned Queue</option>
+        `;
+
+        managers.forEach(mgr => {
+          const reps = Users.getSalespeople(mgr.id);
+          options += `<optgroup label="Team: ${Utils.escapeHtml(mgr.name)} (${reps.length} Counselors)">`;
+          reps.forEach(r => {
+            options += `<option value="${r.id}">${Utils.escapeHtml(r.name)} (${r.id})</option>`;
+          });
+          options += `</optgroup>`;
+        });
+
+        options += `<optgroup label="Counseling Managers">`;
+        managers.forEach(mgr => {
+          options += `<option value="mgr_${mgr.id}">${Utils.escapeHtml(mgr.name)} (Manager)</option>`;
+        });
+        options += `</optgroup>`;
+
+        repSelect.innerHTML = options;
+      }
+
+      repSelect.addEventListener('change', () => {
+        if (rawParsedRows.length) {
+          evaluateImportRows(rawParsedRows);
+        }
+      });
+
+      document.getElementById('import-target-stage').addEventListener('change', () => {
+        if (rawParsedRows.length) {
+          evaluateImportRows(rawParsedRows);
+        }
+      });
+    }
+
+    /**
+     * Resolve assignment target for a row given current dropdown selection
+     */
+    function resolveRowAssignment(rowIndex) {
+      const repSelect = document.getElementById('import-assign-rep');
+      const selection = repSelect ? repSelect.value : 'round_robin_all';
+      const u = currentUser || Auth.getCurrentUser();
+      const isMgr = u && u.role === 'manager';
+      const mgrId = isMgr ? u.id : null;
+      const mgrName = isMgr ? u.name : null;
+
+      if (selection === 'unassigned') {
+        return {
+          salespersonId: null,
+          salespersonName: null,
+          managerId: mgrId,
+          managerName: mgrName,
+          label: 'Unassigned Queue'
+        };
+      }
+
+      if (selection === 'assign_me') {
+        return {
+          salespersonId: u ? u.id : null,
+          salespersonName: u ? u.name : 'Manager',
+          managerId: mgrId,
+          managerName: mgrName,
+          label: u ? `${u.name} (Manager)` : 'Manager'
+        };
+      }
+
+      if (selection === 'round_robin_team') {
+        const team = (u && u.id) ? Users.getTeamMembers(u.id) : [];
+        if (!team.length) {
+          return { salespersonId: null, salespersonName: null, managerId: mgrId, managerName: mgrName, label: u ? `${u.name} (Manager)` : 'Manager' };
+        }
+        const assignedRep = team[rowIndex % team.length];
+        return {
+          salespersonId: assignedRep.id,
+          salespersonName: assignedRep.name,
+          managerId: mgrId,
+          managerName: mgrName,
+          label: `${assignedRep.name} (Round-Robin)`
+        };
+      }
+
+      if (selection === 'round_robin_all') {
+        const allReps = Users.getSalespeople();
+        if (!allReps.length) {
+          return { salespersonId: null, salespersonName: null, managerId: null, managerName: null, label: 'Unassigned' };
+        }
+        const assignedRep = allReps[rowIndex % allReps.length];
+        return {
+          salespersonId: assignedRep.id,
+          salespersonName: assignedRep.name,
+          managerId: assignedRep.managerId,
+          managerName: assignedRep.managerName,
+          label: `${assignedRep.name} (Round-Robin)`
+        };
+      }
+
+      if (selection.startsWith('mgr_')) {
+        const targetMgrId = selection.replace('mgr_', '');
+        const mgr = Users.getById(targetMgrId);
+        return {
+          salespersonId: null,
+          salespersonName: null,
+          managerId: mgr ? mgr.id : null,
+          managerName: mgr ? mgr.name : null,
+          label: mgr ? `${mgr.name} (Manager)` : 'Manager'
+        };
+      }
+
+      // Specific sales rep ID
+      const rep = Users.getById(selection);
+      if (rep) {
+        return {
+          salespersonId: rep.id,
+          salespersonName: rep.name,
+          managerId: rep.managerId || null,
+          managerName: rep.managerName || null,
+          label: rep.name
+        };
+      }
+
+      return { salespersonId: null, salespersonName: null, managerId: null, managerName: null, label: 'Unassigned' };
+    }
+
+    /**
+     * Setup Template Download and Import Execution buttons
+     */
+    function setupButtons() {
+      // 1. Download sample Excel (.xlsx) using SheetJS
+      document.getElementById('btn-download-sample-xlsx').addEventListener('click', () => {
+        downloadSampleExcel();
+      });
+
+      // 2. Download sample CSV
+      document.getElementById('btn-download-sample-csv').addEventListener('click', () => {
+        downloadSampleCsv();
+      });
+
+      // 3. Quick Load Sample Raw Data (instant test button)
+      document.getElementById('btn-quick-sample-load').addEventListener('click', () => {
+        loadQuickSampleData();
+      });
+
+      // 4. Confirm Import
+      document.getElementById('btn-confirm-import').addEventListener('click', () => {
+        executeImport();
+      });
+
+      // 5. Cancel Import
+      document.getElementById('btn-cancel-import').addEventListener('click', () => {
+        document.getElementById('import-summary-card').style.display = 'none';
+        document.getElementById('file-input').value = '';
+        document.getElementById('selected-file-pill').style.display = 'none';
+        rawParsedRows = [];
+        validRowsToImport = [];
+        duplicateRowsList = [];
+      });
+
+      // 6. Toggle Skip Duplicates
+      document.getElementById('chk-skip-duplicates').addEventListener('change', () => {
+        if (rawParsedRows.length) {
+          evaluateImportRows(rawParsedRows);
+        }
+      });
+    }
+
+    /**
+     * Instant test with sample student dataset
+     */
+    function loadQuickSampleData() {
+      const sample = [
+        {
+          'Student Name': 'Kunal Joshi',
+          'Mobile': '9821888001',
+          'Email': 'kunal.j@gmail.com',
+          'Qualification': 'B.Tech (CSE)',
+          'College': 'VJTI Mumbai',
+          'Passing Year': '2025',
+          'Key Skills': 'Java, Spring Boot, MySQL',
+          'Target Role': 'Software Engineer',
+          'Experience': 'Fresher',
+          'City': 'Mumbai',
+          'State': 'Maharashtra',
+          'Expected CTC': '5.5 LPA',
+          'Notes': 'Raw candidate uncalled. VJTI 2025 CS Batch.'
+        },
+        {
+          'Student Name': 'Aishwarya Patil',
+          'Mobile': '9821888002',
+          'Email': 'aishwarya.p@gmail.com',
+          'Qualification': 'BCA',
+          'College': 'Christ University',
+          'Passing Year': '2025',
+          'Key Skills': 'Python, Django, PostgreSQL',
+          'Target Role': 'Full Stack Developer',
+          'Experience': 'Fresher',
+          'City': 'Bengaluru',
+          'State': 'Karnataka',
+          'Expected CTC': '4.8 LPA',
+          'Notes': 'Needs counseling call.'
+        },
+        {
+          'Student Name': 'Rohit Kulkarni',
+          'Mobile': '9821888003',
+          'Email': 'rohit.k@gmail.com',
+          'Qualification': 'MCA',
+          'College': 'Pune University',
+          'Passing Year': '2024',
+          'Key Skills': 'Data Analysis, SQL, Tableau, Python',
+          'Target Role': 'Data Analyst',
+          'Experience': '0-1 yr',
+          'City': 'Pune',
+          'State': 'Maharashtra',
+          'Expected CTC': '6.0 LPA',
+          'Notes': 'Uncontacted raw database lead.'
+        },
+        {
+          'Student Name': 'Sneha Nair',
+          'Mobile': '9821888004',
+          'Email': 'sneha.nair@outlook.com',
+          'Qualification': 'B.E (Information Tech)',
+          'College': 'Anna University',
+          'Passing Year': '2025',
+          'Key Skills': 'React, JavaScript, CSS3, Redux',
+          'Target Role': 'Frontend Engineer',
+          'Experience': 'Fresher',
+          'City': 'Chennai',
+          'State': 'Tamil Nadu',
+          'Expected CTC': '5.0 LPA',
+          'Notes': 'Uncalled raw lead from college placement list.'
+        },
+        {
+          'Student Name': 'Deepak Verma',
+          'Mobile': '9821888005',
+          'Email': 'deepak.v@gmail.com',
+          'Qualification': 'B.Tech (ECE)',
+          'College': 'DTU Delhi',
+          'Passing Year': '2025',
+          'Key Skills': 'C++, Embedded Systems, IoT, Linux',
+          'Target Role': 'Embedded Software Engineer',
+          'Experience': 'Fresher',
+          'City': 'Delhi',
+          'State': 'Delhi',
+          'Expected CTC': '6.5 LPA',
+          'Notes': 'Campus drive raw list.'
+        }
+      ];
+
+      // Update badge pill
+      const pill = document.getElementById('selected-file-pill');
+      pill.style.display = 'inline-flex';
+      pill.className = 'file-badge-pill';
+      pill.innerHTML = `<i class="fa-solid fa-bolt" style="color: #eab308;"></i> <span>Loaded 5 Sample Candidates (Quick Ingestion)</span>`;
+
+      processParsedData(sample);
+      Toast.info('Sample raw student candidate list loaded into preview.');
+    }
+
+    /**
+     * Generate and download sample Excel workbook
+     */
+    function downloadSampleExcel() {
+      const sampleData = [
+        {
+          'Student Name': 'Kunal Joshi',
+          'Mobile': '9821888001',
+          'Email': 'kunal.j@gmail.com',
+          'Qualification': 'B.Tech (CSE)',
+          'College': 'VJTI Mumbai',
+          'Passing Year': '2025',
+          'Key Skills': 'Java, Spring Boot, MySQL',
+          'Target Role': 'Software Engineer',
+          'Experience': 'Fresher',
+          'City': 'Mumbai',
+          'State': 'Maharashtra',
+          'Expected CTC': '5.5 LPA',
+          'Notes': 'Raw candidate uncontacted. College list placement drive.'
+        },
+        {
+          'Student Name': 'Aishwarya Patil',
+          'Mobile': '9821888002',
+          'Email': 'aishwarya.p@gmail.com',
+          'Qualification': 'BCA',
+          'College': 'Christ University',
+          'Passing Year': '2025',
+          'Key Skills': 'Python, Django, PostgreSQL',
+          'Target Role': 'Full Stack Developer',
+          'Experience': 'Fresher',
+          'City': 'Bengaluru',
+          'State': 'Karnataka',
+          'Expected CTC': '4.8 LPA',
+          'Notes': 'Needs counseling on Python backend track.'
+        },
+        {
+          'Student Name': 'Rohit Kulkarni',
+          'Mobile': '9821888003',
+          'Email': 'rohit.k@gmail.com',
+          'Qualification': 'MCA',
+          'College': 'Pune University',
+          'Passing Year': '2024',
+          'Key Skills': 'Data Analysis, SQL, Tableau, Python',
+          'Target Role': 'Data Analyst',
+          'Experience': '0-1 yr',
+          'City': 'Pune',
+          'State': 'Maharashtra',
+          'Expected CTC': '6.0 LPA',
+          'Notes': 'Interested in immediate job placement support.'
+        },
+        {
+          'Student Name': 'Sneha Nair',
+          'Mobile': '9821888004',
+          'Email': 'sneha.nair@outlook.com',
+          'Qualification': 'B.E (Information Tech)',
+          'College': 'Anna University',
+          'Passing Year': '2025',
+          'Key Skills': 'React, JavaScript, CSS3, Redux',
+          'Target Role': 'Frontend Engineer',
+          'Experience': 'Fresher',
+          'City': 'Chennai',
+          'State': 'Tamil Nadu',
+          'Expected CTC': '5.0 LPA',
+          'Notes': 'Raw cold database candidate.'
+        }
+      ];
+
+      try {
+        if (typeof XLSX !== 'undefined') {
+          const ws = XLSX.utils.json_to_sheet(sampleData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Student Raw Data');
+          XLSX.writeFile(wb, 'Student_ColdCalling_Sample_Template.xlsx');
+          Toast.success('Downloaded sample Excel (.xlsx) template.');
+          return;
+        }
+      } catch (err) {
+        console.warn('XLSX.writeFile fallback to CSV:', err);
+      }
+      Utils.exportToCsv('Student_ColdCalling_Sample_Template.csv', sampleData);
+      Toast.info('Downloaded sample template (CSV format).');
+    }
+
+    /**
+     * Download sample CSV
+     */
+    function downloadSampleCsv() {
+      const sampleData = [
+        {
+          'Student Name': 'Kunal Joshi',
+          'Mobile': '9821888001',
+          'Email': 'kunal.j@gmail.com',
+          'Qualification': 'B.Tech (CSE)',
+          'College': 'VJTI Mumbai',
+          'Passing Year': '2025',
+          'Key Skills': 'Java, Spring Boot, MySQL',
+          'Target Role': 'Software Engineer',
+          'Experience': 'Fresher',
+          'City': 'Mumbai',
+          'State': 'Maharashtra',
+          'Expected CTC': '5.5 LPA',
+          'Notes': 'Raw candidate uncalled'
+        },
+        {
+          'Student Name': 'Aishwarya Patil',
+          'Mobile': '9821888002',
+          'Email': 'aishwarya.p@gmail.com',
+          'Qualification': 'BCA',
+          'College': 'Christ University',
+          'Passing Year': '2025',
+          'Key Skills': 'Python, Django, PostgreSQL',
+          'Target Role': 'Full Stack Developer',
+          'Experience': 'Fresher',
+          'City': 'Bengaluru',
+          'State': 'Karnataka',
+          'Expected CTC': '4.8 LPA',
+          'Notes': 'Needs counseling call'
+        },
+        {
+          'Student Name': 'Rohit Kulkarni',
+          'Mobile': '9821888003',
+          'Email': 'rohit.k@gmail.com',
+          'Qualification': 'MCA',
+          'College': 'Pune University',
+          'Passing Year': '2024',
+          'Key Skills': 'Data Analysis, SQL, Tableau',
+          'Target Role': 'Data Analyst',
+          'Experience': '0-1 yr',
+          'City': 'Pune',
+          'State': 'Maharashtra',
+          'Expected CTC': '6.0 LPA',
+          'Notes': 'Raw lead'
+        }
+      ];
+      Utils.exportToCsv('Student_ColdCalling_Sample_Template.csv', sampleData);
+      Toast.info('Downloaded sample student CSV template.');
+    }
+
+    /**
+     * Setup drag and drop / file input zone
+     */
+    function setupUploadZone() {
+      const dropArea = document.getElementById('drop-area');
+      const fileInput = document.getElementById('file-input');
+      const browseBtn = document.getElementById('btn-browse-file');
+
+      // Clicking anywhere on dropArea triggers fileInput
+      dropArea.addEventListener('click', (e) => {
+        if (e.target !== fileInput) {
+          fileInput.click();
+        }
+      });
+
+      browseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropArea.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropArea.classList.remove('dragover');
+        });
+      });
+
+      dropArea.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length) handleIncomingFile(files[0]);
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length) handleIncomingFile(e.target.files[0]);
+      });
+    }
+
+    /**
+     * Handle Excel or CSV file
+     */
+    function handleIncomingFile(file) {
+      const fileName = file.name.toLowerCase();
+      const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+      const isCsv = fileName.endsWith('.csv');
+
+      if (!isExcel && !isCsv) {
+        Toast.error('Unsupported file format. Please upload an Excel (.xlsx, .xls) or CSV (.csv) file.');
+        return;
+      }
+
+      // Update badge pill in upload zone
+      const pill = document.getElementById('selected-file-pill');
+      pill.style.display = 'inline-flex';
+      pill.className = 'file-badge-pill';
+      pill.innerHTML = `
+        <i class="fa-solid ${isExcel ? 'fa-file-excel' : 'fa-file-csv'}"></i>
+        <span>${Utils.escapeHtml(file.name)} (${(file.size / 1024).toFixed(1)} KB)</span>
+      `;
+
+      if (isExcel && typeof XLSX !== 'undefined') {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+            processParsedData(jsonRows);
+          } catch (err) {
+            console.error('Error parsing Excel file:', err);
+            Toast.error('Could not parse Excel workbook. Please verify the file format.');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Read as text or array for CSV
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (typeof XLSX !== 'undefined') {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const firstSheetName = workbook.SheetNames[0];
+              const worksheet = workbook.Sheets[firstSheetName];
+              const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+              if (jsonRows && jsonRows.length) {
+                processParsedData(jsonRows);
+                return;
+              }
+            } catch (err) {
+              // fallback to text parser
+            }
+          }
+          // Read text fallback
+          const textReader = new FileReader();
+          textReader.onload = (ev) => parseCsvTextRobust(ev.target.result);
+          textReader.readAsText(file);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    /**
+     * Intelligent CSV line parser supporting quoted commas and multi-line fields
+     */
+    function parseCsvTextRobust(csvText) {
+      if (!csvText || !csvText.trim()) {
+        Toast.error('CSV file appears empty.');
+        return;
+      }
+
+      // Regex split for CSV row with quotes
+      const parseRow = (line) => {
+        const result = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              cur += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            result.push(cur.trim());
+            cur = '';
+          } else {
+            cur += char;
+          }
+        }
+        result.push(cur.trim());
+        return result;
+      };
+
+      const lines = csvText.split(/\r\n|\n/).filter(l => l.trim() !== '');
+      if (lines.length < 2) {
+        Toast.error('CSV file appears empty or missing header row.');
+        return;
+      }
+
+      const headers = parseRow(lines[0]);
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseRow(lines[i]);
+        const rowObj = {};
+        headers.forEach((h, idx) => {
+          rowObj[h] = values[idx] || '';
+        });
+        rows.push(rowObj);
+      }
+
+      processParsedData(rows);
+    }
+
+    /**
+     * Clean and normalize raw rows
+     */
+    function processParsedData(rawRows) {
+      if (!rawRows || !rawRows.length) {
+        Toast.error('The selected file does not contain any data rows.');
+        return;
+      }
+
+      // Filter out completely empty objects where all values are blank
+      const cleanRows = rawRows.filter(row => {
+        return Object.values(row).some(v => String(v !== undefined && v !== null ? v : '').trim() !== '');
+      });
+
+      if (!cleanRows.length) {
+        Toast.error('The file contains only empty rows.');
+        return;
+      }
+
+      rawParsedRows = cleanRows;
+      evaluateImportRows(rawParsedRows);
+    }
+
+    /**
+     * Smart column key resolver with exact and fuzzy matching
+     */
+    function findColumnValue(row, possibleNames) {
+      const keys = Object.keys(row);
+
+      // 1. Exact match pass
+      for (const name of possibleNames) {
+        const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (const k of keys) {
+          const cleanK = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (cleanK === cleanName) {
+            return String(row[k] !== undefined && row[k] !== null ? row[k] : '').trim();
+          }
+        }
+      }
+
+      // 2. Fuzzy / substring match pass
+      for (const name of possibleNames) {
+        const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (const k of keys) {
+          const cleanK = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (cleanK.includes(cleanName) || cleanName.includes(cleanK)) {
+            return String(row[k] !== undefined && row[k] !== null ? row[k] : '').trim();
+          }
+        }
+      }
+
+      return '';
+    }
+
+    /**
+     * Clean phone number string avoiding scientific notation
+     */
+    function cleanMobileString(val) {
+      if (!val) return '';
+      if (typeof val === 'number') {
+        val = val.toLocaleString('fullwide', { useGrouping: false });
+      }
+      let str = String(val).trim();
+      if (str.toLowerCase().includes('e+')) {
+        str = Number(str).toLocaleString('fullwide', { useGrouping: false });
+      }
+      return str.replace(/[^0-9]/g, '');
+    }
+
+    /**
+     * Validate and map data rows
+     */
+    function evaluateImportRows(rows) {
+      const targetStage = document.getElementById('import-target-stage').value;
+      const skipDuplicates = document.getElementById('chk-skip-duplicates').checked;
+      const sourceTag = document.getElementById('import-source').value;
+      const priorityTag = document.getElementById('import-priority').value;
+      const batchNote = document.getElementById('import-batch-note').value.trim();
+
+      let validCount = 0;
+      let duplicateCount = 0;
+      let invalidCount = 0;
+
+      validRowsToImport = [];
+      duplicateRowsList = [];
+      const seenMobilesInFile = new Set();
+
+      const evaluatedRows = rows.map((rawRow, idx) => {
+        const rowNum = idx + 1;
+
+        // Extract normalized fields
+        const name = findColumnValue(rawRow, ['studentname', 'name', 'candidatename', 'fullname', 'student']);
+        const rawMobile = findColumnValue(rawRow, ['mobile', 'phone', 'mobilenumber', 'contact', 'contactnumber', 'contactno', 'phonenumber', 'phoneno', 'cell', 'whatsapp', 'mobile1', 'phone1']);
+        const mobile = cleanMobileString(rawMobile);
+        const email = findColumnValue(rawRow, ['email', 'emailid', 'emailaddress', 'studentemail', 'mail']);
+        const qualification = findColumnValue(rawRow, ['qualification', 'degree', 'course', 'stream', 'branch', 'education', 'highestqualification']) || 'B.Tech (CSE)';
+        const college = findColumnValue(rawRow, ['college', 'university', 'institute', 'collegename', 'institution']) || 'College / University';
+        const passingYear = findColumnValue(rawRow, ['passingyear', 'yearofpassing', 'yop', 'batch', 'gradyear', 'graduationyear']) || '2025';
+        const skills = findColumnValue(rawRow, ['skills', 'keyskills', 'technicalskills', 'techstack', 'technologies', 'skillset']) || 'Java, SQL, Python';
+        const targetRole = findColumnValue(rawRow, ['targetrole', 'jobrole', 'desiredrole', 'role', 'position', 'profile']) || 'Software Engineer';
+        const experienceLevel = findColumnValue(rawRow, ['experience', 'experiencelevel', 'exp', 'yrsofexp', 'yearsofexperience']) || 'Fresher';
+        const city = findColumnValue(rawRow, ['city', 'location', 'currentcity', 'town']) || 'Mumbai';
+        const state = findColumnValue(rawRow, ['state', 'region', 'province']) || 'Maharashtra';
+        const expectedCtc = findColumnValue(rawRow, ['expectedctc', 'ctc', 'salary', 'package']);
+        const notes = findColumnValue(rawRow, ['notes', 'remarks', 'comments', 'counselingnotes']);
+
+        // Assignment calculation
+        const assignment = resolveRowAssignment(validCount);
+
+        let status = 'Valid';
+        let statusBadge = '<span class="badge badge-status-converted">Ready</span>';
+        let isRowValid = false;
+
+        if (!name) {
+          status = 'Missing Name';
+          statusBadge = '<span class="badge badge-priority-high">Missing Name</span>';
+          invalidCount++;
+        } else if (!mobile || !Validation.isValidMobile(mobile)) {
+          status = 'Invalid Mobile (10 Digits Required)';
+          statusBadge = `<span class="badge badge-priority-high" title="Mobile was: ${rawMobile}">Invalid Phone</span>`;
+          invalidCount++;
+        } else if (seenMobilesInFile.has(mobile)) {
+          status = 'Duplicate in File';
+          statusBadge = '<span class="badge badge-priority-medium">File Duplicate</span>';
+          duplicateCount++;
+          if (!skipDuplicates) {
+            isRowValid = true;
+          }
+        } else {
+          seenMobilesInFile.add(mobile);
+          // Check localStorage duplicate
+          const existing = Validation.checkDuplicateMobile(mobile);
+          if (existing.exists) {
+            status = `Duplicate (${existing.customer.id})`;
+            statusBadge = `<span class="badge badge-priority-medium" title="Already registered as ${existing.customer.name}">Duplicate (${existing.customer.id})</span>`;
+            duplicateCount++;
+            if (!skipDuplicates) {
+              isRowValid = true;
+            }
+          } else {
+            isRowValid = true;
+          }
+        }
+
+        if (isRowValid) {
+          validCount++;
+          validRowsToImport.push({
+            name,
+            mobile,
+            email,
+            qualification,
+            college,
+            passingYear,
+            skills,
+            targetRole,
+            experienceLevel,
+            city,
+            state,
+            expectedCtc,
+            notes: [notes, batchNote].filter(Boolean).join(' | '),
+            source: sourceTag,
+            priority: priorityTag,
+            stage: targetStage,
+            salespersonId: assignment.salespersonId,
+            salespersonName: assignment.salespersonName,
+            managerId: assignment.managerId,
+            managerName: assignment.managerName
+          });
+        }
+
+        return {
+          rowNum,
+          name,
+          mobile,
+          qualification,
+          college,
+          passingYear,
+          skills,
+          targetRole,
+          city,
+          assignedTo: assignment.label,
+          targetStage,
+          statusBadge
+        };
+      });
+
+      // Update stat cards
+      document.getElementById('stat-total-rows').textContent = rows.length;
+      document.getElementById('stat-valid-rows').textContent = validCount;
+      document.getElementById('stat-duplicate-rows').textContent = duplicateCount;
+      document.getElementById('stat-invalid-rows').textContent = invalidCount;
+
+      // Update assignment summary pill
+      const targetRepText = document.getElementById('import-assign-rep').selectedOptions[0]?.text || 'Assigned Team';
+      document.getElementById('assignment-preview-pill').innerHTML = `
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Destination: <strong>${targetStage}</strong> | <strong>${Utils.escapeHtml(targetRepText)}</strong>
+      `;
+
+      // Render Preview Table (first 50)
+      const tbody = document.getElementById('import-preview-tbody');
+      const previewRows = evaluatedRows.slice(0, 50);
+
+      tbody.innerHTML = previewRows.map(row => `
+        <tr>
+          <td style="font-weight: 700; color: var(--slate-500);">#${row.rowNum}</td>
+          <td><strong>${Utils.escapeHtml(row.name || '—')}</strong></td>
+          <td style="font-family: monospace; font-weight: 600;">${row.mobile || '—'}</td>
+          <td>${Utils.escapeHtml(row.qualification || '—')}</td>
+          <td>${Utils.escapeHtml(row.college || '—')}</td>
+          <td style="text-align: center;"><span class="badge" style="background:#f1f5f9; color:#475569;">${row.passingYear}</span></td>
+          <td><span style="font-size: 0.75rem; color: var(--primary-700);">${Utils.escapeHtml(row.skills)}</span></td>
+          <td><strong>${Utils.escapeHtml(row.targetRole)}</strong></td>
+          <td>${Utils.escapeHtml(row.city)}</td>
+          <td><span style="font-weight: 600; color: var(--slate-800);">${Utils.escapeHtml(row.assignedTo)}</span></td>
+          <td>${Utils.getStageBadge(row.targetStage)}</td>
+          <td>${row.statusBadge}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('btn-confirm-import').disabled = validCount === 0;
+      document.getElementById('import-summary-card').style.display = 'block';
+
+      // Scroll smoothly down to the summary card
+      document.getElementById('import-summary-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /**
+     * Execute the bulk import into localStorage
+     */
+    function executeImport() {
+      if (!validRowsToImport.length) {
+        Toast.error('No valid rows available to import.');
+        return;
+      }
+
+      const confirmBtn = document.getElementById('btn-confirm-import');
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ingesting Student Candidates...';
+
+      let successCount = 0;
+      let failedCount = 0;
+
+      validRowsToImport.forEach(item => {
+        const res = Customers.create({
+          name: item.name,
+          mobile: item.mobile,
+          email: item.email,
+          qualification: item.qualification,
+          college: item.college,
+          passingYear: item.passingYear,
+          skills: item.skills,
+          targetRole: item.targetRole,
+          experienceLevel: item.experienceLevel,
+          city: item.city,
+          state: item.state,
+          expectedCtc: item.expectedCtc,
+          notes: item.notes,
+          source: item.source,
+          priority: item.priority,
+          stage: item.stage,
+          salespersonId: item.salespersonId,
+          salespersonName: item.salespersonName,
+          managerId: item.managerId,
+          managerName: item.managerName
+        });
+
+        if (res.success) {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      });
+
+      const targetStage = document.getElementById('import-target-stage').value;
+      const targetRepText = document.getElementById('import-assign-rep').selectedOptions[0]?.text || 'Team';
+
+      const u = currentUser || Auth.getCurrentUser();
+      const userName = u ? u.name : 'Alexander Wright';
+      const userRole = u ? u.role : 'admin';
+
+      Activities.log({
+        action: 'Bulk Candidates Ingested',
+        description: `${userName} (${userRole}) imported ${successCount} candidates into "${targetStage}" stage. Assignment: "${targetRepText}".`
+      });
+
+      Toast.success(`Successfully imported ${successCount} student candidates into ${targetStage}!`);
+
+      setTimeout(() => {
+        // Redirect directly to the pipeline filtered to this stage so the user immediately sees the imported records!
+        window.location.href = `pipeline.html?stage=${encodeURIComponent(targetStage)}`;
+      }, 900);
+    }
+  </script>
+</body>
+</html>
