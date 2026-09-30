@@ -133,6 +133,9 @@ const App = {
           <h2>Career Apex</h2>
           <span>Student Placement CRM</span>
         </div>
+        <button class="crm-sidebar-close-btn" id="crm-sidebar-close-btn" aria-label="Close Sidebar" title="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
 
       <div class="crm-nav-wrapper">
@@ -283,9 +286,9 @@ const App = {
     if (!headerEl) return;
 
     headerEl.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 1rem; width: 100%; justify-content: space-between;">
-        <div style="display: flex; align-items: center; gap: 1rem; flex: 1; max-width: 550px;">
-          <button class="btn btn-icon btn-secondary" id="mobile-menu-toggle" style="display: none;" title="Toggle Sidebar">
+      <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 550px;">
+          <button class="btn btn-icon btn-secondary crm-sidebar-toggle-btn" id="mobile-menu-toggle" aria-label="Toggle Sidebar Navigation" title="Toggle Navigation Menu">
             <i class="fa-solid fa-bars"></i>
           </button>
           
@@ -792,23 +795,63 @@ const App = {
   },
 
   /**
-   * Mobile sidebar toggle
+   * Mobile sidebar toggle and responsive backdrop manager
    */
   initMobileMenu() {
+    let backdrop = document.getElementById('crm-sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'crm-sidebar-backdrop';
+      backdrop.className = 'crm-sidebar-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
     const toggleBtn = document.getElementById('mobile-menu-toggle');
     const sidebar = document.getElementById('crm-sidebar');
-    if (!toggleBtn || !sidebar) return;
+    const closeBtn = document.getElementById('crm-sidebar-close-btn');
+    if (!sidebar) return;
 
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
+    const openSidebar = () => {
+      sidebar.classList.add('open');
+      backdrop.classList.add('active');
+      document.body.classList.add('sidebar-open');
+    };
+
+    const closeSidebar = () => {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('active');
+      document.body.classList.remove('sidebar-open');
+    };
+
+    toggleBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
 
-    document.addEventListener('click', (e) => {
-      if (window.innerWidth <= 768) {
-        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-          sidebar.classList.remove('open');
-        }
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeSidebar();
+    });
+
+    backdrop.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar();
       }
+    });
+
+    // Close when a nav link is clicked on mobile / tablet
+    sidebar.querySelectorAll('a.crm-nav-item, a.crm-nav-subitem').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 992) {
+          closeSidebar();
+        }
+      });
     });
   }
 };
