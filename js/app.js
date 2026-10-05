@@ -319,6 +319,9 @@ const App = {
     const headerEl = document.getElementById('crm-header');
     if (!headerEl) return;
 
+    const currentUser = (user && typeof user === 'object' && user.id) ? user : Auth.getCurrentUser();
+    const role = ((currentUser && currentUser.role) || 'admin').toLowerCase();
+
     headerEl.innerHTML = `
       <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 550px;">
@@ -384,6 +387,15 @@ const App = {
                   <i class="fa-solid fa-arrows-rotate"></i> Reset All Demo Data
                 </button>
               </div>
+            </div>
+          </div>
+
+          <!-- Active User Profile Pill in Header -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem 0.25rem 0.25rem; border-radius: var(--radius-full); background: var(--slate-100); border: 1px solid var(--border-light);">
+            <img src="${(currentUser && currentUser.avatar) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}" alt="${(currentUser && currentUser.name) || 'User'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+            <div class="hide-mobile" style="line-height: 1.2; padding-right: 0.25rem;">
+              <div style="font-size: 0.78rem; font-weight: 600; color: var(--slate-900);">${Utils.escapeHtml((currentUser && currentUser.name) || 'User')}</div>
+              <div style="font-size: 0.65rem; color: var(--slate-500); text-transform: uppercase; font-weight: 700;">${Utils.escapeHtml(role)}</div>
             </div>
           </div>
         </div>
