@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Settings & Diagnostics — Apex Sales CRM</title>
+  <title>System Settings & Diagnostics — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -37,7 +37,7 @@
         <div class="kpi-grid">
           <div class="kpi-card kpi-primary">
             <div class="kpi-info">
-              <span class="kpi-label">Registered Students</span>
+              <span class="kpi-label">Registered Leads</span>
               <span class="kpi-value" id="diag-cust-count">0</span>
               <span class="kpi-subtext" style="color: var(--slate-500); font-size: 0.75rem;">Candidates in system</span>
             </div>
@@ -108,6 +108,56 @@
           </div>
         </div>
 
+        <!-- Communication Templates Governance Card -->
+        <div class="card" style="margin-bottom: 1.5rem; border: 1px solid var(--border-light); background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-envelope-open-text" style="color: var(--primary-600);"></i>
+                Communication Templates Governance
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--slate-500); margin: 0.2rem 0 0 0;">
+                Admin & Sales Manager controlled templates for 1-click candidate engagement (Email & WhatsApp with/without attachments)
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary btn-sm" id="btn-create-template-direct">
+                <i class="fa-solid fa-plus"></i> Create Template
+              </button>
+              <button class="btn btn-primary btn-sm" id="btn-manage-templates-direct" style="background: var(--primary-600); font-weight: 700;">
+                <i class="fa-solid fa-sliders"></i> Manage All Templates
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.85rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Email Templates</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a;" id="diag-email-templates-count">0</div>
+                <div style="font-size: 0.72rem; color: #3b82f6;">Pre-formatted subject, body & tags</div>
+              </div>
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 0.85rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #047857; text-transform: uppercase;">WhatsApp Templates</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #064e3b;" id="diag-wa-templates-count">0</div>
+                <div style="font-size: 0.72rem; color: #10b981;">1-click wa.me chat dispatch</div>
+              </div>
+              <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 0.85rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #b91c1c; text-transform: uppercase;">With Attachment</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #7f1d1d;" id="diag-att-templates-count">0</div>
+                <div style="font-size: 0.72rem; color: #ef4444;">Brochures, Agreements & JDs</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 0.85rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase;">Team Permission</div>
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-top: 0.4rem;">Admin & Manager</div>
+                <div style="font-size: 0.72rem; color: #64748b;">Full CRUD & Team Deployment</div>
+              </div>
+            </div>
+
+            <!-- Quick Template List Preview -->
+            <div id="settings-templates-preview-list" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+          </div>
+        </div>
+
         <!-- System Architecture Information -->
         <div class="card">
           <div class="card-header">
@@ -140,6 +190,7 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
   <script src="../js/auth.js"></script>
@@ -147,11 +198,12 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (!Auth.requireAuth(['admin'])) return;
+      if (!Auth.requireAuth(['admin', 'manager'])) return;
       App.init('settings');
 
       renderDiagnostics();
       renderStages();
+      renderTemplateDiagnostics();
       setupHandlers();
     });
 
@@ -193,7 +245,7 @@
       document.getElementById('btn-reset-demo').addEventListener('click', () => {
         ConfirmModal.show({
           title: 'Reset Demo Database',
-          message: 'Are you sure you want to reset all CRM students, activities, follow-ups and calls to factory demo data?',
+          message: 'Are you sure you want to reset all CRM leads, activities, follow-ups and calls to factory demo data?',
           confirmText: 'Reset Now',
           confirmVariant: 'danger',
           onConfirm: () => {
@@ -214,7 +266,7 @@
         const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute('href', dataStr);
-        downloadAnchor.setAttribute('download', `ApexCRM_FullBackup_${new Date().toISOString().slice(0, 10)}.json`);
+        downloadAnchor.setAttribute('download', `SkillMoveCRM_FullBackup_${new Date().toISOString().slice(0, 10)}.json`);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
@@ -243,6 +295,57 @@
         };
         reader.readAsText(file);
       });
+      // Template direct buttons
+      document.getElementById('btn-manage-templates-direct')?.addEventListener('click', () => {
+        if (window.Templates && typeof Templates.openTemplateManagerModal === 'function') {
+          Templates.openTemplateManagerModal();
+        }
+      });
+      document.getElementById('btn-create-template-direct')?.addEventListener('click', () => {
+        if (window.Templates && typeof Templates.openTemplateManagerModal === 'function') {
+          Templates.openTemplateManagerModal();
+        }
+      });
+    }
+
+    function renderTemplateDiagnostics() {
+      const emailTemplates = (window.Templates && typeof Templates.getAll === 'function') ? Templates.getAll('email') : [];
+      const waTemplates = (window.Templates && typeof Templates.getAll === 'function') ? Templates.getAll('whatsapp') : [];
+      const allTemplates = (window.Templates && typeof Templates.getAll === 'function') ? Templates.getAll() : [];
+      const attTemplates = allTemplates.filter(t => t.hasAttachment);
+
+      const emEl = document.getElementById('diag-email-templates-count');
+      const waEl = document.getElementById('diag-wa-templates-count');
+      const attEl = document.getElementById('diag-att-templates-count');
+      if (emEl) emEl.textContent = emailTemplates.length;
+      if (waEl) waEl.textContent = waTemplates.length;
+      if (attEl) attEl.textContent = attTemplates.length;
+
+      const previewList = document.getElementById('settings-templates-preview-list');
+      if (previewList) {
+        previewList.innerHTML = allTemplates.slice(0, 6).map(t => {
+          const isEm = t.type === 'email';
+          return `
+            <div style="padding: 0.65rem 0.85rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #fff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <span class="badge" style="${isEm ? 'background:#eff6ff; color:#1d4ed8;' : 'background:#ecfdf5; color:#047857;'} font-size: 0.72rem;">
+                  <i class="fa-solid ${isEm ? 'fa-envelope' : 'fa-brands fa-whatsapp'}"></i> ${isEm ? 'Email' : 'WhatsApp'}
+                </span>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--slate-900);">${Utils.escapeHtml(t.name)}</strong>
+                  <span style="font-size: 0.72rem; color: var(--slate-400); margin-left: 0.35rem;">(${t.category || 'General'})</span>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                ${t.hasAttachment ? `<span class="badge" style="background:#fef2f2; color:#b91c1c; font-size:0.7rem;"><i class="fa-solid fa-paperclip"></i> ${Utils.escapeHtml(t.attachmentName || 'PDF')}</span>` : '<span style="font-size:0.7rem; color:var(--slate-400);">Without attachment</span>'}
+                <button class="btn btn-secondary btn-sm" onclick="Templates.openTemplateManagerModal('${t.type}')" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">
+                  <i class="fa-solid fa-pen"></i> Edit
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
   </script>
 </body>

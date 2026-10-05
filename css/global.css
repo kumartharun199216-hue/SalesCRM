@@ -168,13 +168,15 @@ button, input, select, textarea {
 
 /* Lead Stage Badges */
 .badge-stage-cold { background-color: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+.badge-stage-not-connected { background-color: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
 .badge-stage-new { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
 .badge-stage-contacted { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 .badge-stage-interested { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
 .badge-stage-prospect { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
 .badge-stage-followup { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
 .badge-stage-negotiation { background-color: #ccfbf1; color: #115e59; border: 1px solid #99f6e4; }
-.badge-stage-converted { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.badge-stage-pending-closure { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+.badge-stage-enrolled, .badge-stage-converted { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
 .badge-stage-not-interested { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 .badge-stage-lost { background-color: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3; }
 
@@ -185,7 +187,9 @@ button, input, select, textarea {
 
 /* Lead Status Badges */
 .badge-status-active { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-.badge-status-converted { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+.badge-status-pending-closure { background-color: #fef08a; color: #713f12; border: 1px solid #facc15; }
+.badge-status-not-connected { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.badge-status-enrolled, .badge-status-converted { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
 .badge-status-lost { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 .badge-status-notinterested { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 .badge-status-closed { background-color: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }

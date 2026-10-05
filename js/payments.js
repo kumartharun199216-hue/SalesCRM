@@ -1,6 +1,6 @@
 /**
  * SALES CRM - PAYMENTS & PLACEMENT FEE MODULE
- * Handles student placement fee contracts, installment schedules,
+ * Handles lead placement fee contracts, installment schedules,
  * transaction ledgers, cash collection tracking, and revenue analytics.
  */
 
@@ -17,27 +17,34 @@ const Payments = {
    * Get all recorded payment transactions
    */
   getAll() {
-    return StorageService.getData(CRM_STORAGE_KEYS.PAYMENTS, []);
+    try {
+      const list = StorageService.getData(CRM_STORAGE_KEYS.PAYMENTS, []);
+      if (!Array.isArray(list)) return [];
+      return list.filter(p => p && typeof p === 'object' && p.id);
+    } catch (e) {
+      console.error('Error in Payments.getAll:', e);
+      return [];
+    }
   },
 
   /**
-   * Get all payment transactions for a specific student
+   * Get all payment transactions for a specific lead
    */
   getByCustomerId(customerId) {
     if (!customerId) return [];
     const all = this.getAll();
     const cleanId = String(customerId).trim().toUpperCase();
-    return all.filter(p => String(p.customerId).trim().toUpperCase() === cleanId);
+    return all.filter(p => p && p.customerId && String(p.customerId).trim().toUpperCase() === cleanId);
   },
 
   /**
-   * Record a new installment / fee payment for a student
+   * Record a new installment / fee payment for a lead
    * @param {object} data
    * @returns {{ success: boolean, message?: string, payment?: object, customer?: object }}
    */
   recordPayment(data) {
     if (!data.customerId) {
-      return { success: false, message: 'Student ID is required.' };
+      return { success: false, message: 'Lead ID is required.' };
     }
 
     const amount = Number(data.amount);
@@ -47,7 +54,7 @@ const Payments = {
 
     const customer = Customers.getById(data.customerId);
     if (!customer) {
-      return { success: false, message: 'Student candidate record not found.' };
+      return { success: false, message: 'Lead record not found.' };
     }
 
     const currentUser = Auth.getCurrentUser();
@@ -162,11 +169,11 @@ const Payments = {
   },
 
   /**
-   * Update student placement fee structure and installment plan
+   * Update lead placement fee structure and installment plan
    */
   updateFeePlan(customerId, planData) {
     const customer = Customers.getById(customerId);
-    if (!customer) return { success: false, message: 'Student not found.' };
+    if (!customer) return { success: false, message: 'Lead not found.' };
 
     const totalFee = Number(planData.totalFee) || 0;
     const planType = planData.paymentPlan || customer.paymentPlan || '2 Installments';
@@ -330,7 +337,7 @@ const Payments = {
         pendingCount++;
       }
 
-      // Check if student has any overdue installment
+      // Check if lead has any overdue installment
       if (Array.isArray(c.installments)) {
         const hasOverdue = c.installments.some(inst => {
           return inst.status !== 'Paid' && inst.dueDate && inst.dueDate < today;
@@ -352,12 +359,15 @@ const Payments = {
       partiallyPaidCount,
       pendingCount,
       overdueCount,
+      totalLeads: list.length,
+      totalStudents: list.length,
+      totalLeadsWithFees: list.filter(c => (c.totalFee || 0) > 0).length,
       totalStudentsWithFees: list.filter(c => (c.totalFee || 0) > 0).length
     };
   },
 
   /**
-   * Get list of all pending and overdue installments across students
+   * Get list of all pending and overdue installments across leads
    */
   getInstallmentDues(scopedCustomers = null, filterType = 'all') {
     const list = scopedCustomers || Customers.getAll();
@@ -386,7 +396,7 @@ const Payments = {
           customerId: c.id,
           customerName: c.name,
           mobile: c.mobile,
-          degree: c.qualification || 'Student',
+          degree: c.qualification || 'Lead',
           college: c.college || '',
           stage: c.stage,
           salespersonId: c.salespersonId,
@@ -420,6 +430,7 @@ const Payments = {
         name: r.name,
         managerName: r.managerName || '—',
         avatar: r.avatar,
+        leadsCount: 0,
         studentsCount: 0,
         enrolledCount: 0,
         placedCount: 0,
@@ -435,6 +446,7 @@ const Payments = {
       name: 'Unassigned Queue',
       managerName: '—',
       avatar: null,
+      leadsCount: 0,
       studentsCount: 0,
       enrolledCount: 0,
       placedCount: 0,
@@ -446,6 +458,7 @@ const Payments = {
     customers.forEach(c => {
       const repKey = c.salespersonId && repMap[c.salespersonId] ? c.salespersonId : 'unassigned';
       const rep = repMap[repKey];
+      rep.leadsCount++;
       rep.studentsCount++;
 
       const stage = (c.stage || '').toLowerCase();
@@ -462,7 +475,7 @@ const Payments = {
     });
 
     return Object.values(repMap)
-      .filter(r => r.studentsCount > 0 || r.id !== 'unassigned')
+      .filter(r => r.leadsCount > 0 || r.id !== 'unassigned')
       .map(r => ({
         ...r,
         collectionRate: r.totalBooked > 0 ? Number(((r.totalCollected / r.totalBooked) * 100).toFixed(1)) : 0
@@ -536,8 +549,8 @@ const Payments = {
       <div id="printable-receipt" style="padding: 2rem; background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; max-width: 650px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0284c7; padding-bottom: 1rem; margin-bottom: 1.5rem;">
           <div>
-            <div style="font-size: 1.4rem; font-weight: 800; color: #0284c7; letter-spacing: -0.02em;">CAREER APEX CRM</div>
-            <div style="font-size: 0.8rem; color: #64748b;">Student Placement & Training Services</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #0284c7; letter-spacing: -0.02em;">SKILL MOVE CRM</div>
+            <div style="font-size: 0.8rem; color: #64748b;">Career Services & Training</div>
             <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">GSTIN: 27AABCC1234F1Z9 • Mumbai, India</div>
           </div>
           <div style="text-align: right;">
@@ -550,10 +563,10 @@ const Payments = {
         </div>
 
         <div style="background: #f8fafc; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem;">Student Details</div>
+          <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem;">Lead Details</div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.875rem;">
             <div><strong>Name:</strong> ${Utils.escapeHtml(c.name || p.customerName || '—')}</div>
-            <div><strong>Student ID:</strong> ${Utils.escapeHtml(c.id || p.customerId || '—')}</div>
+            <div><strong>Lead ID:</strong> ${Utils.escapeHtml(c.id || p.customerId || '—')}</div>
             <div><strong>Degree / Course:</strong> ${Utils.escapeHtml(c.qualification || p.studentDegree || '—')}</div>
             <div><strong>Mobile:</strong> ${Utils.escapeHtml(c.mobile || '—')}</div>
             <div><strong>College:</strong> ${Utils.escapeHtml(c.college || p.college || '—')}</div>
@@ -592,7 +605,7 @@ const Payments = {
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.75rem; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 1rem;">
-          <div>This is a computer-generated receipt issued by Career Apex Placement CRM.</div>
+          <div>This is a computer-generated receipt issued by Skill Move Placement CRM.</div>
           <div style="text-align: center; border-top: 1px solid #64748b; padding-top: 0.25rem; min-width: 140px; color: #475569;">
             Authorized Signature
           </div>

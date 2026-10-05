@@ -44,22 +44,22 @@ console.log('Total Fees Booked:', Payments.formatCurrency(summary.totalBooked));
 console.log('Total Fees Collected:', Payments.formatCurrency(summary.totalCollected));
 console.log('Total Pending Dues:', Payments.formatCurrency(summary.totalPending));
 console.log('Collection Rate:', summary.collectionRate + '%');
-console.log('Fully Paid Students:', summary.fullyPaidCount);
-console.log('Partially Paid Students:', summary.partiallyPaidCount);
-console.log('Pending Students:', summary.pendingCount);
-console.log('Overdue Installment Students:', summary.overdueCount);
+console.log('Fully Paid Leads:', summary.fullyPaidCount);
+console.log('Partially Paid Leads:', summary.partiallyPaidCount);
+console.log('Pending Leads:', summary.pendingCount);
+console.log('Overdue Installment Leads:', summary.overdueCount);
 
 const allPayments = Payments.getAll();
 console.log('Total Transactions in Ledger:', allPayments.length);
 console.assert(allPayments.length > 0, 'Transactions should be seeded');
 
 // Test recording a new installment
-const student = Customers.getAll().find(c => c.paymentStatus === 'Partially Paid');
-console.log(`\nTesting recording installment payment for ${student.name} (${student.id}):`);
-console.log('Before payment - Paid:', student.paidAmount, 'Pending:', student.pendingAmount, 'Status:', student.paymentStatus);
+const lead = Customers.getAll().find(c => c.paymentStatus === 'Partially Paid');
+console.log(`\nTesting recording installment payment for ${lead.name} (${lead.id}):`);
+console.log('Before payment - Paid:', lead.paidAmount, 'Pending:', lead.pendingAmount, 'Status:', lead.paymentStatus);
 
 const payRes = Payments.recordPayment({
-  customerId: student.id,
+  customerId: lead.id,
   amount: 15000,
   paymentMode: 'UPI / Online',
   transactionRef: 'UPI-TEST-123456',
@@ -80,7 +80,7 @@ counselorReport.forEach(r => {
 // Test dues
 console.log('\nOverdue & Upcoming Installment Dues:');
 const dues = Payments.getInstallmentDues();
-console.log(`Found ${dues.length} pending/overdue installment milestones across students.`);
+console.log(`Found ${dues.length} pending/overdue installment milestones across leads.`);
 dues.slice(0, 3).forEach(d => {
   console.log(`- ${d.customerName} (${d.title}): Due ${Payments.formatCurrency(d.balanceDue)} on ${d.dueDate} [${d.status}]`);
 });

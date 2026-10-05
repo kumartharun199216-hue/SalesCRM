@@ -55,12 +55,17 @@ const Communication = {
   },
 
   /**
-   * Open WhatsApp chat in a new browser tab
+   * Open WhatsApp conversation with Template selection and attachment options
    */
-  openWhatsApp(customerId) {
+  openWhatsApp(customerId, promptTemplate = true, onSent = null) {
     const customer = Customers.getById(customerId);
     if (!customer || !customer.mobile) {
-      Toast.error('Customer phone number not available.');
+      if (window.Toast) Toast.error('Customer phone number not available.');
+      return;
+    }
+
+    if (promptTemplate && window.Templates && typeof Templates.openSendModal === 'function') {
+      Templates.openSendModal({ customerId, type: 'whatsapp', onSent });
       return;
     }
 
@@ -74,16 +79,22 @@ const Communication = {
     });
 
     window.open(waUrl, '_blank', 'noopener,noreferrer');
-    Toast.info(`Opened WhatsApp chat for ${customer.name}`);
+    if (window.Toast) Toast.info(`Opened WhatsApp chat for ${customer.name}`);
+    if (typeof onSent === 'function') onSent();
   },
 
   /**
-   * Open default email client using mailto: protocol
+   * Open Email composer with Template selection and attachment options
    */
-  initiateEmail(customerId) {
+  initiateEmail(customerId, promptTemplate = true, onSent = null) {
     const customer = Customers.getById(customerId);
     if (!customer || !customer.email) {
-      Toast.error('Customer email address not available.');
+      if (window.Toast) Toast.error('Customer email address not available.');
+      return;
+    }
+
+    if (promptTemplate && window.Templates && typeof Templates.openSendModal === 'function') {
+      Templates.openSendModal({ customerId, type: 'email', onSent });
       return;
     }
 
@@ -95,7 +106,6 @@ const Communication = {
       description: `Email composer opened for ${customer.name} (${customer.email})`
     });
 
-    // Open mail client safely without navigating away
     try {
       const a = document.createElement('a');
       a.href = mailUrl;
@@ -106,7 +116,8 @@ const Communication = {
     } catch (e) {
       window.location.href = mailUrl;
     }
-    Toast.info(`Drafting email to ${customer.email}`);
+    if (window.Toast) Toast.info(`Drafting email to ${customer.email}`);
+    if (typeof onSent === 'function') onSent();
   },
 
   /**

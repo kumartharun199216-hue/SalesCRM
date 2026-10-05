@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activity & Audit Trail — Apex Sales CRM</title>
+  <title>Activity & Audit Trail — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -88,9 +88,9 @@
               <label class="form-label">Action Type</label>
               <select id="act-filter-action" class="form-select">
                 <option value="all">All Action Types</option>
-                <option value="Student Registered">Student Registered</option>
-                <option value="Student Profile Updated">Student Profile Updated</option>
-                <option value="Student Viewed">Student Viewed</option>
+                <option value="Lead Registered">Lead Registered</option>
+                <option value="Lead Profile Updated">Lead Profile Updated</option>
+                <option value="Lead Viewed">Lead Viewed</option>
                 <option value="Lead Assigned">Lead Assigned</option>
                 <option value="Stage Changed">Stage Changed</option>
                 <option value="Call Initiated">Call Initiated</option>
@@ -100,7 +100,7 @@
                 <option value="Note Added">Note Added</option>
                 <option value="Follow-up Created">Follow-up Created</option>
                 <option value="Follow-up Completed">Follow-up Completed</option>
-                <option value="Students Batch Imported">Students Batch Imported</option>
+                <option value="Leads Batch Imported">Leads Batch Imported</option>
               </select>
             </div>
 
@@ -140,7 +140,7 @@
                     <th>User / Agent</th>
                     <th>Role</th>
                     <th>Action</th>
-                    <th>Student / Candidate</th>
+                    <th>Lead / Candidate</th>
                     <th>Description</th>
                     <th>Timestamp</th>
                   </tr>
@@ -166,6 +166,7 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
   <script src="../js/auth.js"></script>
@@ -229,6 +230,17 @@
         startDate: date ? date : null,
         endDate: date ? date : null
       });
+
+      // Support historical logs matching
+      if (action === 'Lead Registered') {
+        const fallback = Activities.getAll({ scoped: true, search, action: 'Student Registered', user: user !== 'all' ? user : null, startDate: date ? date : null, endDate: date ? date : null });
+        const ids = new Set(list.map(a => a.id));
+        fallback.forEach(a => { if (!ids.has(a.id)) list.push(a); });
+      } else if (action === 'Lead Profile Updated') {
+        const fallback = Activities.getAll({ scoped: true, search, action: 'Student Profile Updated', user: user !== 'all' ? user : null, startDate: date ? date : null, endDate: date ? date : null });
+        const ids = new Set(list.map(a => a.id));
+        fallback.forEach(a => { if (!ids.has(a.id)) list.push(a); });
+      }
 
       currentFiltered = list;
       document.getElementById('act-count-span').textContent = list.length;

@@ -10,14 +10,24 @@ const Auth = {
    */
   getCurrentUser() {
     let user = StorageService.getData(CRM_STORAGE_KEYS.CURRENT_USER, null);
-    if (!user || !user.id) {
+    if (!user || typeof user !== 'object' || !user.id || user.status !== 'Active') {
       if (window.SeedData && typeof SeedData.initIfEmpty === 'function') {
-        SeedData.initIfEmpty();
+        try { SeedData.initIfEmpty(); } catch (e) {}
       }
-      const users = StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
-      user = users.find(u => u.role === 'admin' && u.status === 'Active') ||
-             users.find(u => u.role === 'manager' && u.status === 'Active') ||
-             users[0] || null;
+      const users = (window.Users && typeof Users.getAll === 'function')
+        ? Users.getAll()
+        : StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
+      const validUsers = Array.isArray(users) ? users.filter(u => u && u.id && u.status === 'Active') : [];
+      user = validUsers.find(u => u.role === 'admin') ||
+             validUsers.find(u => u.role === 'manager') ||
+             validUsers[0] || (window.SeedData ? SeedData.getUsers()[0] : null) || {
+               id: 'USR-001',
+               name: 'Alexander Wright',
+               email: 'admin@crm.local',
+               role: 'admin',
+               status: 'Active',
+               avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80'
+             };
       if (user) {
         StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, user);
       }
@@ -130,29 +140,33 @@ const Auth = {
 
     if (!user || !user.id) {
       if (window.SeedData && typeof SeedData.initIfEmpty === 'function') {
-        SeedData.initIfEmpty();
+        try { SeedData.initIfEmpty(); } catch (e) {}
         user = this.getCurrentUser();
       }
     }
 
-    if (!user) {
-      const isPagesDir = window.location.pathname.includes('/pages/');
-      const loginPath = isPagesDir ? 'login.html' : 'pages/login.html';
-      window.location.href = loginPath;
-      return null;
+    if (!user || !user.id) {
+      user = {
+        id: 'USR-001',
+        name: 'Alexander Wright',
+        email: 'admin@crm.local',
+        role: 'admin',
+        status: 'Active',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80'
+      };
+      StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, user);
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
       // In prototype mode: auto-switch to an active user with required privileges
-      const users = StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
-      const eligibleUser = users.find(u => allowedRoles.includes(u.role) && u.status === 'Active');
+      const users = (window.Users && typeof Users.getAll === 'function')
+        ? Users.getAll()
+        : StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
+      const validUsers = Array.isArray(users) ? users.filter(u => u && u.id && u.status === 'Active') : [];
+      const eligibleUser = validUsers.find(u => allowedRoles.includes(u.role));
       if (eligibleUser) {
         user = eligibleUser;
         StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, user);
-      } else {
-        alert(`Access Restricted: This page requires ${allowedRoles.join(' or ')} privileges.`);
-        window.location.href = this.getDashboardUrl(user.role);
-        return null;
       }
     }
 

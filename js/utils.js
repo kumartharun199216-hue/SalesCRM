@@ -75,12 +75,14 @@ const Utils = {
     let badgeClass = 'badge-stage-new';
 
     if (lower.includes('cold')) badgeClass = 'badge-stage-cold';
+    else if (lower.includes('notconnect')) badgeClass = 'badge-stage-not-connected';
     else if (lower.includes('contact')) badgeClass = 'badge-stage-contacted';
-    else if (lower.includes('interest')) badgeClass = 'badge-stage-interested';
+    else if (lower.includes('interest') && !lower.includes('not')) badgeClass = 'badge-stage-interested';
     else if (lower.includes('prospect')) badgeClass = 'badge-stage-prospect';
     else if (lower.includes('follow')) badgeClass = 'badge-stage-followup';
     else if (lower.includes('negotiat')) badgeClass = 'badge-stage-negotiation';
-    else if (lower.includes('convert')) badgeClass = 'badge-stage-converted';
+    else if (lower.includes('pendingclosure') || lower.includes('closure')) badgeClass = 'badge-stage-pending-closure';
+    else if (lower.includes('enroll') || lower.includes('convert')) badgeClass = 'badge-stage-enrolled';
     else if (lower.includes('notinterest')) badgeClass = 'badge-stage-not-interested';
     else if (lower.includes('lost')) badgeClass = 'badge-stage-lost';
 
@@ -108,9 +110,15 @@ const Utils = {
     let badgeClass = 'badge-status-active';
     let icon = 'fa-circle-check';
 
-    if (s.includes('convert')) {
-      badgeClass = 'badge-status-converted';
+    if (s.includes('enroll') || s.includes('convert')) {
+      badgeClass = 'badge-status-enrolled';
       icon = 'fa-trophy';
+    } else if (s.includes('closure') || s.includes('pendingclosure')) {
+      badgeClass = 'badge-status-pending-closure';
+      icon = 'fa-file-invoice-dollar';
+    } else if (s.includes('notconnect')) {
+      badgeClass = 'badge-status-not-connected';
+      icon = 'fa-phone-slash';
     } else if (s.includes('lost')) {
       badgeClass = 'badge-status-lost';
       icon = 'fa-circle-xmark';

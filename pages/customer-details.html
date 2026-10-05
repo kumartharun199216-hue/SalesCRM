@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Profile — Career Apex CRM</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Lead Profile — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -73,35 +76,35 @@
         <!-- Breadcrumbs -->
         <div style="margin-bottom: 1rem; font-size: 0.825rem; color: var(--slate-500); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <a href="customers.html" style="color: var(--primary-600); text-decoration: none; font-weight: 500;">Students</a>
+            <a href="customers.html" style="color: var(--primary-600); text-decoration: none; font-weight: 500;">Leads</a>
             <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
-            <span id="breadcrumb-cust-id">CRM-STU-000000</span>
+            <span id="breadcrumb-cust-id">SM-LD-0001</span>
           </div>
           <div>
             <a href="customers.html" class="btn btn-outline btn-sm">
-              <i class="fa-solid fa-arrow-left"></i> Back to Students Directory
+              <i class="fa-solid fa-arrow-left"></i> Back to Leads Directory
             </a>
           </div>
         </div>
 
-        <!-- Student Profile Hero Card -->
+        <!-- Lead Profile Hero Card -->
         <div class="profile-hero">
           <div class="profile-hero-top">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
               <div style="width: 60px; height: 60px; border-radius: var(--radius-lg); background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.75rem; font-weight: 800; box-shadow: 0 6px 16px var(--primary-glow);" id="hero-avatar-init">
-                ST
+                LD
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                   <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em;" id="hero-cust-name">
-                    Student Name
+                    Lead Name
                   </h1>
                   <span id="hero-stage-badge"></span>
                   <span id="hero-status-badge"></span>
                   <span id="hero-priority-badge"></span>
                 </div>
                 <div style="color: var(--slate-500); font-size: 0.875rem; margin-top: 0.25rem;" id="hero-subtitle">
-                  CRM-STU-000000 • Degree / College • City
+                  SM-LD-0001 • Degree / College • City
                 </div>
               </div>
             </div>
@@ -109,7 +112,7 @@
             <!-- Communication & Profile Action Buttons -->
             <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center;">
               <!-- Edit All Details Button -->
-              <button class="btn btn-primary" id="btn-hero-edit-student" onclick="openEditStudentModal()" style="background: var(--primary-600); font-weight: 700;">
+              <button class="btn btn-primary" id="btn-hero-edit-lead" onclick="openEditLeadModal()" style="background: var(--primary-600); font-weight: 700;">
                 <i class="fa-solid fa-user-pen"></i> Edit Profile
               </button>
 
@@ -162,7 +165,7 @@
           </div>
         </div>
 
-        <!-- Student Detail Tabs -->
+        <!-- Lead Detail Tabs -->
         <div class="nav-tabs" style="margin-bottom: 1.5rem;">
           <button class="tab-btn active" data-tab="tab-overview">
             <i class="fa-solid fa-id-card"></i> Candidate Overview
@@ -233,6 +236,7 @@
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Expected CTC / Package</td><td id="det-ctc">—</td></tr>
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Inflow Source</td><td id="det-source">—</td></tr>
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Pipeline Stage</td><td id="det-stage">—</td></tr>
+                    <tr id="row-det-est-rev" style="display: none; background: #fefce8;"><td style="color: #854d0e; font-weight: 700;"><i class="fa-solid fa-indian-rupee-sign"></i> Estimated Revenue</td><td id="det-est-rev" style="font-weight: 800; color: #b45309;">—</td></tr>
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Placement Status</td><td id="det-status">—</td></tr>
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Career Counselor</td><td id="det-salesperson" style="font-weight: 600;">—</td></tr>
                     <tr><td style="color: var(--slate-500); font-weight: 500;">Counseling Manager</td><td id="det-manager">—</td></tr>
@@ -289,7 +293,7 @@
         <div id="tab-timeline" class="tab-pane" style="display: none;">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Student Engagement Timeline</h3>
+              <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Lead Engagement Timeline</h3>
             </div>
             <div class="card-body" style="padding: 1.5rem;">
               <div id="customer-timeline-list" style="display: flex; flex-direction: column; gap: 1rem;"></div>
@@ -305,7 +309,7 @@
             </div>
             <div class="card-body">
               <div class="form-group">
-                <textarea id="new-note-text" class="form-control" rows="3" placeholder="Enter counseling remarks, mock interview feedback, student career preferences..."></textarea>
+                <textarea id="new-note-text" class="form-control" rows="3" placeholder="Enter counseling remarks, mock interview feedback, lead career preferences..."></textarea>
               </div>
               <div style="display: flex; justify-content: flex-end;">
                 <button class="btn btn-primary" id="btn-save-note">
@@ -515,15 +519,15 @@
     </div>
   </div>
 
-  <!-- Edit Full Student Details Modal -->
-  <div id="edit-student-modal" class="modal-backdrop">
+  <!-- Edit Full Lead Details Modal -->
+  <div id="edit-lead-modal" class="modal-backdrop">
     <div class="modal-dialog modal-lg">
       <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-user-pen" style="color: var(--primary-600); margin-right: 0.5rem;"></i>Edit Full Student Profile</h3>
+        <h3 class="modal-title"><i class="fa-solid fa-user-pen" style="color: var(--primary-600); margin-right: 0.5rem;"></i>Edit Full Lead Profile</h3>
         <button class="modal-close-btn" id="edit-stu-close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <form id="edit-student-form">
+        <form id="edit-lead-form">
           <input type="hidden" id="edit-stu-id">
 
           <!-- Basic Candidate Info -->
@@ -532,7 +536,7 @@
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
             <div class="form-group">
-              <label class="form-label">Student Full Name <span class="required">*</span></label>
+              <label class="form-label">Lead Full Name <span class="required">*</span></label>
               <input type="text" class="form-control" id="edit-stu-name" required>
             </div>
             <div class="form-group">
@@ -665,13 +669,15 @@
               <label class="form-label">Pipeline Stage <span class="required">*</span></label>
               <select class="form-select" id="edit-stu-stage">
                 <option value="Cold Calling">Cold Calling (Raw Data - Uncalled)</option>
+                <option value="Not Connected">Not Connected</option>
                 <option value="New Lead">New Lead</option>
                 <option value="Contacted">Contacted</option>
                 <option value="Interested">Interested</option>
                 <option value="Prospect">Prospect</option>
                 <option value="Follow-up">Follow-up</option>
                 <option value="Negotiation">Negotiation</option>
-                <option value="Converted">Converted</option>
+                <option value="Pending Closure">Pending Closure</option>
+                <option value="Enrolled">Enrolled</option>
                 <option value="Not Interested">Not Interested</option>
                 <option value="Lost">Lost</option>
               </select>
@@ -680,7 +686,9 @@
               <label class="form-label">Placement Status</label>
               <select class="form-select" id="edit-stu-status">
                 <option value="Active">Active</option>
-                <option value="Converted">Converted</option>
+                <option value="Pending Closure">Pending Closure</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Not Connected">Not Connected</option>
                 <option value="Not Interested">Not Interested</option>
                 <option value="Lost">Lost</option>
               </select>
@@ -693,6 +701,18 @@
                 <option value="Low">Low</option>
               </select>
             </div>
+          </div>
+
+          <!-- Dynamic Estimated Revenue for Pending Closure in Edit Modal -->
+          <div class="form-group" id="edit-stu-est-rev-group" style="display: none; background: #fefce8; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid #fef08a; margin-bottom: 0.85rem;">
+            <label class="form-label" style="font-weight: 700; color: #854d0e;">
+              <i class="fa-solid fa-indian-rupee-sign" style="margin-right: 0.25rem;"></i> Estimated Revenue (₹)
+            </label>
+            <div style="position: relative;">
+              <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: #b45309;">₹</span>
+              <input type="number" min="0" step="500" class="form-control" id="edit-stu-est-revenue" placeholder="e.g. 50000" style="padding-left: 2rem; font-weight: 700; background: #fff;">
+            </div>
+            <small style="font-size: 0.72rem; color: #92400e; margin-top: 0.35rem; display: block;">Expected closure value entered during pending closure.</small>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
@@ -722,7 +742,7 @@
 
           <div class="form-group" style="margin-bottom: 0.5rem;">
             <label class="form-label">Counseling Notes & Career Aspirations</label>
-            <textarea class="form-control" id="edit-stu-notes" rows="2" placeholder="Student background, immediate availability, preferred interview timings..."></textarea>
+            <textarea class="form-control" id="edit-stu-notes" rows="2" placeholder="Lead background, immediate availability, preferred interview timings..."></textarea>
           </div>
 
           <div id="edit-stu-error" style="display: none; padding: 0.75rem; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); font-size: 0.85rem; margin-top: 0.5rem;"></div>
@@ -783,8 +803,8 @@
           <input type="hidden" id="pay-modal-customer-id">
           
           <div class="form-group" style="margin-bottom: 0.85rem;">
-            <label class="form-label" style="font-weight: 600;">Student Candidate</label>
-            <input type="text" class="form-control" id="pay-modal-student-name" readonly style="background: var(--slate-100); font-weight: 700;">
+            <label class="form-label" style="font-weight: 600;">Lead Candidate</label>
+            <input type="text" class="form-control" id="pay-modal-lead-name" readonly style="background: var(--slate-100); font-weight: 700;">
           </div>
 
           <div class="form-group" style="margin-bottom: 0.85rem;">
@@ -870,62 +890,139 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
+  <script src="../js/targets.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/app.js"></script>
 
   <script>
     let currentCustomer = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = Auth.requireAuth();
-      if (!user) return;
-
-      App.initCommon(user, 'customers');
-
-      const urlParams = new URLSearchParams(window.location.search);
-      let customerId = urlParams.get('id');
-
-      const allScoped = Customers.getScopedCustomers(user);
-
-      // Graceful fallback if no ID in URL: pick the first student
-      if (!customerId && allScoped.length > 0) {
-        customerId = allScoped[0].id;
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('id', customerId);
-        window.history.replaceState({}, '', newUrl);
+    function initCustomerDetails() {
+      // 1. Self-healing check: Ensure demo data is loaded and has SM-LD- format
+      try {
+        const storedCustomers = StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+        const validStored = Array.isArray(storedCustomers) ? storedCustomers.filter(c => c && typeof c === 'object' && c.id) : [];
+        if (!validStored.length || validStored.some(c => !c.id || !c.id.startsWith('SM-LD-'))) {
+          if (window.SeedData && typeof SeedData.resetDemoData === 'function') {
+            SeedData.resetDemoData();
+          }
+        }
+      } catch (err) {
+        console.warn('Seed verification warning:', err);
       }
 
-      currentCustomer = customerId ? Customers.getById(customerId) : null;
+      // 2. Guaranteed user authentication
+      let user = null;
+      try {
+        user = Auth.requireAuth();
+      } catch (err) {
+        console.warn('Auth check fallback:', err);
+      }
+      if (!user || !user.id) {
+        user = (window.Auth && typeof Auth.getCurrentUser === 'function' ? Auth.getCurrentUser() : null) || {
+          id: 'USR-001',
+          name: 'Alexander Wright',
+          email: 'admin@crm.local',
+          role: 'admin',
+          status: 'Active'
+        };
+      }
 
-      if (!currentCustomer) {
-        if (allScoped.length > 0) {
-          currentCustomer = allScoped[0];
-          const newUrl = new URL(window.location.href);
-          newUrl.searchParams.set('id', currentCustomer.id);
-          window.history.replaceState({}, '', newUrl);
-        } else {
-          Toast.error('No student candidate records found in system.');
-          setTimeout(() => window.location.href = 'customers.html', 1500);
-          return;
+      // 3. Initialize common app shell (sidebar, header, search)
+      try {
+        App.initCommon(user, 'customers');
+      } catch (err) {
+        console.error('App.initCommon error:', err);
+      }
+
+      // 4. Resolve Lead Candidate ID from URL with smart fallbacks
+      let customerId = null;
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        customerId = urlParams.get('id');
+      } catch (e) {
+        console.warn('URL parsing error:', e);
+      }
+
+      let allCustomers = [];
+      try {
+        allCustomers = Customers.getAll();
+      } catch (e) {
+        console.warn('Customers.getAll error:', e);
+      }
+
+      if (!allCustomers || !allCustomers.length) {
+        try {
+          if (window.SeedData && typeof SeedData.resetDemoData === 'function') {
+            SeedData.resetDemoData();
+            allCustomers = Customers.getAll();
+          }
+        } catch (e) {}
+      }
+
+      // Priority 1: Match by exact or normalized ID
+      if (customerId) {
+        try {
+          currentCustomer = Customers.getById(customerId);
+        } catch (e) {
+          console.warn('Customers.getById error:', e);
         }
       }
 
-      renderCustomerHero();
-      renderCustomerDetails();
-      setupTabs();
-      setupActionButtons();
-      setupNoteSection();
-      setupFollowupModal();
-      setupEditStudentModal();
-      setupPaymentModals();
-      updateTabBadges();
-    });
+      // Priority 2: Case-insensitive match from loaded list
+      if (!currentCustomer && customerId && allCustomers && allCustomers.length > 0) {
+        const cleanId = String(customerId).trim().toUpperCase();
+        currentCustomer = allCustomers.find(c => c && c.id && String(c.id).trim().toUpperCase() === cleanId);
+      }
+
+      // Priority 3: Fallback to first available lead
+      if (!currentCustomer) {
+        if (allCustomers && allCustomers.length > 0) {
+          currentCustomer = allCustomers[0];
+        } else if (window.SeedData && typeof SeedData.getCustomers === 'function') {
+          const seeds = SeedData.getCustomers();
+          currentCustomer = seeds && seeds.length ? seeds[0] : null;
+        }
+      }
+
+      if (currentCustomer && currentCustomer.id) {
+        // Sync URL query param
+        try {
+          const newUrl = new URL(window.location.href);
+          if (newUrl.searchParams.get('id') !== currentCustomer.id) {
+            newUrl.searchParams.set('id', currentCustomer.id);
+            window.history.replaceState({}, '', newUrl);
+          }
+        } catch (e) {}
+
+        try { renderCustomerHero(); } catch (e) { console.error('Error rendering hero:', e); }
+        try { renderCustomerDetails(); } catch (e) { console.error('Error rendering details:', e); }
+        try { setupTabs(); } catch (e) { console.error('Error setting up tabs:', e); }
+        try { setupActionButtons(); } catch (e) { console.error('Error setting up action buttons:', e); }
+        try { setupNoteSection(); } catch (e) { console.error('Error setting up notes:', e); }
+        try { setupFollowupModal(); } catch (e) { console.error('Error setting up followups modal:', e); }
+        try { setupEditStudentModal(); } catch (e) { console.error('Error setting up edit modal:', e); }
+        try { setupPaymentModals(); } catch (e) { console.error('Error setting up payment modal:', e); }
+        try { updateTabBadges(); } catch (e) { console.error('Error updating tab badges:', e); }
+      } else {
+        Toast.error('No lead candidate records found in system.');
+        setTimeout(() => window.location.href = 'customers.html', 1500);
+      }
+    }
+
+    // Ensure initialization executes reliably regardless of readyState
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCustomerDetails);
+    } else {
+      initCustomerDetails();
+    }
 
     function refreshCustomerData() {
       if (!currentCustomer) return;
-      currentCustomer = Customers.getById(currentCustomer.id);
+      currentCustomer = (Customers.getById && Customers.getById(currentCustomer.id)) || currentCustomer;
       renderCustomerHero();
       renderCustomerDetails();
       loadTimelineTab();
@@ -945,9 +1042,9 @@
 
       if (el('breadcrumb-cust-id')) el('breadcrumb-cust-id').textContent = `${c.id} (${c.name})`;
       if (el('hero-cust-name')) el('hero-cust-name').textContent = c.name;
-      if (el('hero-subtitle')) el('hero-subtitle').textContent = `${c.id} • ${c.qualification || 'Student'} • ${c.college || 'College'}, ${c.city || 'India'}`;
+      if (el('hero-subtitle')) el('hero-subtitle').textContent = `${c.id} • ${c.qualification || 'Lead'} • ${c.college || 'College'}, ${c.city || 'India'}`;
       
-      const initials = (c.name || 'S').trim().split(/\s+/).map(w => w ? w[0] : '').slice(0, 2).join('').toUpperCase() || 'ST';
+      const initials = (c.name || 'L').trim().split(/\s+/).map(w => w ? w[0] : '').slice(0, 2).join('').toUpperCase() || 'LD';
       if (el('hero-avatar-init')) el('hero-avatar-init').textContent = initials;
 
       if (el('hero-stage-badge')) el('hero-stage-badge').innerHTML = Utils.getStageBadge(c.stage);
@@ -989,6 +1086,15 @@
       if (el('det-source')) el('det-source').textContent = c.source || 'Website Inquiry';
       if (el('det-stage')) el('det-stage').innerHTML = Utils.getStageBadge(c.stage);
       if (el('det-status')) el('det-status').innerHTML = Utils.getStatusBadge(c.status);
+      if (el('det-est-rev')) {
+        const estRevVal = c.estimatedRevenue || (c.stage === 'Pending Closure' ? c.totalFee || 45000 : null);
+        if (estRevVal || c.stage === 'Pending Closure') {
+          if (el('row-det-est-rev')) el('row-det-est-rev').style.display = '';
+          el('det-est-rev').textContent = Payments.formatCurrency(estRevVal || 0);
+        } else {
+          if (el('row-det-est-rev')) el('row-det-est-rev').style.display = 'none';
+        }
+      }
       if (el('det-salesperson')) el('det-salesperson').textContent = c.salespersonName || 'Unassigned';
       if (el('det-manager')) el('det-manager').textContent = c.managerName || 'Unassigned';
       if (el('det-created')) el('det-created').textContent = Utils.formatDateTime(c.createdAt);
@@ -1109,13 +1215,13 @@
     }
 
     /**
-     * Complete Edit Student Modal Logic
+     * Complete Edit Lead Modal Logic
      */
     function setupEditStudentModal() {
-      window.openEditStudentModal = () => {
+      window.openEditLeadModal = window.openEditStudentModal = () => {
         if (!currentCustomer) return;
         const cust = currentCustomer;
-        const modal = document.getElementById('edit-student-modal');
+        const modal = document.getElementById('edit-lead-modal') || document.getElementById('edit-student-modal');
         const errBox = document.getElementById('edit-stu-error');
         errBox.style.display = 'none';
 
@@ -1136,14 +1242,27 @@
         document.getElementById('edit-stu-prefloc').value = cust.preferredLocation || '';
         document.getElementById('edit-stu-ctc').value = cust.expectedCtc || '';
         document.getElementById('edit-stu-address').value = cust.address || '';
-        document.getElementById('edit-stu-stage').value = cust.stage || 'New Lead';
-        document.getElementById('edit-stu-status').value = cust.status || 'Active';
+        document.getElementById('edit-stu-stage').value = cust.stage === 'Converted' ? 'Enrolled' : (cust.stage || 'New Lead');
+        document.getElementById('edit-stu-status').value = cust.status === 'Converted' ? 'Enrolled' : (cust.status || 'Active');
         document.getElementById('edit-stu-priority').value = cust.priority || 'Medium';
         document.getElementById('edit-stu-source').value = cust.source || 'Website Inquiry';
         document.getElementById('edit-stu-notes').value = cust.notes || '';
         document.getElementById('edit-stu-fee').value = cust.totalFee !== undefined ? cust.totalFee : 45000;
+        document.getElementById('edit-stu-est-revenue').value = cust.estimatedRevenue || cust.totalFee || 45000;
         document.getElementById('edit-stu-payplan').value = cust.paymentPlan || '2 Installments';
         document.getElementById('edit-stu-paystatus').value = cust.paymentStatus || 'Pending';
+
+        const stageSelectEl = document.getElementById('edit-stu-stage');
+        const estRevGroupEl = document.getElementById('edit-stu-est-rev-group');
+        const updateEstRevVisibility = () => {
+          if (stageSelectEl.value === 'Pending Closure') {
+            estRevGroupEl.style.display = 'block';
+          } else {
+            estRevGroupEl.style.display = 'none';
+          }
+        };
+        stageSelectEl.onchange = updateEstRevVisibility;
+        updateEstRevVisibility();
 
         // Managers select
         const mgrSelect = document.getElementById('edit-stu-manager');
@@ -1165,7 +1284,7 @@
           const email = document.getElementById('edit-stu-email').value.trim();
 
           if (!name) {
-            errBox.textContent = 'Student name is required.';
+            errBox.textContent = 'Lead name is required.';
             errBox.style.display = 'block';
             return;
           }
@@ -1197,6 +1316,9 @@
             priority: document.getElementById('edit-stu-priority').value,
             source: document.getElementById('edit-stu-source').value,
             notes: document.getElementById('edit-stu-notes').value.trim(),
+            estimatedRevenue: document.getElementById('edit-stu-stage').value === 'Pending Closure' || document.getElementById('edit-stu-est-revenue').value
+              ? Number(document.getElementById('edit-stu-est-revenue').value) || Number(document.getElementById('edit-stu-fee').value) || 45000
+              : (cust.estimatedRevenue || null),
             totalFee: Number(document.getElementById('edit-stu-fee').value) || 0,
             paymentPlan: document.getElementById('edit-stu-payplan').value,
             paymentStatus: document.getElementById('edit-stu-paystatus').value,
@@ -1212,7 +1334,7 @@
             return;
           }
 
-          Toast.success(`Student profile for ${res.customer.name} updated successfully!`);
+          Toast.success(`Lead profile for ${res.customer.name} updated successfully!`);
           hide();
           refreshCustomerData();
         };
@@ -1318,7 +1440,7 @@
       if (!tbody) return;
 
       if (!calls.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--slate-400); padding: 2rem;">No calls recorded for this student yet</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--slate-400); padding: 2rem;">No calls recorded for this lead yet</td></tr>`;
         return;
       }
 
@@ -1340,7 +1462,7 @@
       if (!tbody) return;
 
       if (!flws.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">No follow-ups scheduled for this student</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">No follow-ups scheduled for this lead</td></tr>`;
         return;
       }
 
@@ -1529,7 +1651,7 @@
 
       if (transTbody) {
         if (!trans.length) {
-          transTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">No fee transactions recorded yet for this student.</td></tr>`;
+          transTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--slate-400); padding: 2rem;">No fee transactions recorded yet for this lead.</td></tr>`;
         } else {
           transTbody.innerHTML = trans.map(t => `
             <tr>
@@ -1629,7 +1751,8 @@
       if (!payModal) return;
 
       document.getElementById('pay-modal-customer-id').value = c.id;
-      document.getElementById('pay-modal-student-name').value = `${c.name} (${c.id}) • ${c.qualification || 'Student'}`;
+      const leadNameEl = document.getElementById('pay-modal-lead-name') || document.getElementById('pay-modal-student-name');
+      if (leadNameEl) leadNameEl.value = `${c.name} (${c.id}) • ${c.qualification || 'Lead'}`;
       document.getElementById('pay-modal-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('pay-modal-ref').value = `UPI-${Date.now().toString().slice(-6)}`;
       document.getElementById('pay-modal-received-by').value = (Auth.getCurrentUser() || {}).name || c.salespersonName || 'Alexander Wright';
@@ -1693,25 +1816,20 @@
         return;
       }
       const printWin = window.open('', '_blank', 'width=800,height=700');
-      printWin.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Payment Receipt - Career Apex CRM</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #fff; }
-            @media print { body { padding: 0; } }
-          </style>
-        </head>
-        <body>
-          ${receiptEl.outerHTML}
-          <script>
-            window.onload = function() { window.print(); window.close(); }
-          <\/script>
-        </body>
-        </html>
-      `);
+      if (!printWin) {
+        window.print();
+        return;
+      }
+      printWin.document.open();
+      printWin.document.write(receiptEl.outerHTML);
       printWin.document.close();
+      printWin.focus();
+      setTimeout(() => {
+        try {
+          printWin.print();
+          printWin.close();
+        } catch (e) {}
+      }, 300);
     };
   </script>
 </body>

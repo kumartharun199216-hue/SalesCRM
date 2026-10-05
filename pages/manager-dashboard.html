@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales Manager Dashboard — Apex Sales CRM</title>
+  <title>Sales Manager Dashboard — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -86,6 +86,95 @@
           </div>
         </div>
 
+        <!-- Team Revenue Target & 4-Week Milestone Realization Card -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: #ffffff; border: 1.5px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <!-- Card Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                <i class="fa-solid fa-bullseye"></i>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--slate-900); margin: 0;">Team Revenue Targets & 4-Week Progress Breakdown</h3>
+                  <span class="badge" id="mgr-target-month-badge" style="background: #f1f5f9; color: #475569; font-weight: 700;">October 2026</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--slate-500);">Monthly targets and 4-week milestones for every employee under this team</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn btn-primary btn-sm" id="btn-mgr-update-targets" style="font-size: 0.78rem;">
+                <i class="fa-solid fa-pen-to-square"></i> Set / Update Targets
+              </button>
+            </div>
+          </div>
+
+          <!-- Team Monthly High-Level Target Summary Strip -->
+          <div style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 0.75rem;">
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Team Monthly Target</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); line-height: 1.2;" id="mgr-monthly-target-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--success-text); text-transform: uppercase; letter-spacing: 0.05em;">Team Achieved Revenue</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--success-solid); line-height: 1.2;" id="mgr-monthly-achieved-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Remaining to Target</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--warning-solid); line-height: 1.2;" id="mgr-monthly-remaining-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Team Realization</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #4338ca; line-height: 1.2;" id="mgr-team-percent-label">0.0%</div>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+              <div style="height: 8px; background: rgba(0,0,0,0.08); border-radius: 9999px; overflow: hidden;">
+                <div id="mgr-monthly-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 9999px; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Week Team Milestone Cards Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem;" id="mgr-weeks-container">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Team Member Target Breakdown Table -->
+          <div style="border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden;">
+            <div style="padding: 0.75rem 1rem; background: var(--slate-50); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-weight: 700; font-size: 0.825rem; color: var(--slate-800); text-transform: uppercase; letter-spacing: 0.04em;">
+                <i class="fa-solid fa-users" style="color: var(--primary-600);"></i> Counselor Revenue Targets & Progress
+              </span>
+              <span style="font-size: 0.75rem; color: var(--slate-500);">Monthly Target divided across 4 Weeks</span>
+            </div>
+            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+              <table class="table" style="font-size: 0.825rem; margin: 0;">
+                <thead>
+                  <tr style="background: var(--slate-100);">
+                    <th>Counselor</th>
+                    <th>Monthly Target</th>
+                    <th>Achieved</th>
+                    <th>Realization %</th>
+                    <th>Week 1</th>
+                    <th>Week 2</th>
+                    <th>Week 3</th>
+                    <th>Week 4</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="mgr-reps-targets-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Team KPI Cards -->
         <div class="kpi-grid">
           <div class="kpi-card kpi-purple">
@@ -99,11 +188,11 @@
 
           <div class="kpi-card kpi-primary">
             <div class="kpi-info">
-              <span class="kpi-label">Team Total Students</span>
+              <span class="kpi-label">Team Total Leads</span>
               <span class="kpi-value" id="kpi-mgr-total-leads">0</span>
-              <span class="kpi-subtext" style="color: var(--slate-500); font-size: 0.75rem;">Assigned student candidates</span>
+              <span class="kpi-subtext" style="color: var(--slate-500); font-size: 0.75rem;">Assigned leads</span>
             </div>
-            <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
           </div>
 
           <div class="kpi-card kpi-warning">
@@ -135,7 +224,7 @@
 
           <div class="kpi-card kpi-success">
             <div class="kpi-info">
-              <span class="kpi-label">Team Converted</span>
+              <span class="kpi-label">Team Enrolled</span>
               <span class="kpi-value" id="kpi-mgr-converted">0</span>
               <span class="kpi-subtext" style="color: var(--success-solid); font-size: 0.75rem;" id="kpi-mgr-win-rate">0% win rate</span>
             </div>
@@ -219,12 +308,121 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
+  <script src="../js/targets.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/app.js"></script>
 
   <script>
+    function renderTeamRevenueTargets(managerId) {
+      if (!window.Targets) return;
+      const currentMonth = Targets.getCurrentMonth();
+      const currentUser = Auth.getCurrentUser();
+      const scopedMgrId = (currentUser && currentUser.role === 'admin') ? null : managerId;
+      const progress = Targets.getTeamRevenueProgress(scopedMgrId, currentMonth);
+      if (!progress) return;
+
+      const [year, monthNum] = currentMonth.split('-');
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthLabel = `${monthNames[parseInt(monthNum, 10) - 1]} ${year}`;
+
+      const monthBadge = document.getElementById('mgr-target-month-badge');
+      if (monthBadge) monthBadge.textContent = monthLabel;
+
+      document.getElementById('mgr-monthly-target-amt').textContent = Targets.formatCurrency(progress.totalMonthlyTarget);
+      document.getElementById('mgr-monthly-achieved-amt').textContent = Targets.formatCurrency(progress.totalMonthlyAchieved);
+      document.getElementById('mgr-monthly-remaining-amt').textContent = Targets.formatCurrency(progress.teamRemaining);
+      document.getElementById('mgr-team-percent-label').textContent = `${progress.teamPercent}% (${Targets.formatCurrency(progress.totalMonthlyAchieved)} of ${Targets.formatCurrency(progress.totalMonthlyTarget)})`;
+      document.getElementById('mgr-monthly-progress-bar').style.width = `${Math.min(100, progress.teamPercent)}%`;
+
+      // Render 4-Week Milestone Cards for the team
+      const weeksContainer = document.getElementById('mgr-weeks-container');
+      if (weeksContainer) {
+        weeksContainer.innerHTML = progress.weeks.map(w => {
+          const isCurr = w.isCurrentWeek;
+          return `
+            <div style="background: white; border: ${isCurr ? '2px solid var(--primary-500)' : '1px solid var(--border-light)'}; border-radius: var(--radius-lg); padding: 0.9rem 1rem; position: relative; ${isCurr ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);' : ''}">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 800; font-size: 0.88rem; color: var(--slate-900);">${w.label}</span>
+                <span style="font-size: 0.7rem; color: var(--slate-500); background: var(--slate-100); padding: 0.15rem 0.45rem; border-radius: 4px;">${w.dateRange}</span>
+              </div>
+              ${isCurr ? `
+                <div style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 0.1rem 0.4rem; border-radius: 9999px; margin-bottom: 0.4rem;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> Current Week
+                </div>
+              ` : ''}
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.72rem; color: var(--slate-500); text-transform: uppercase; font-weight: 700;">Target</span>
+                <span style="font-size: 0.95rem; font-weight: 800; color: var(--slate-900);">${Targets.formatCurrency(w.target)}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.72rem; color: var(--success-text); text-transform: uppercase; font-weight: 700;">Achieved</span>
+                <span style="font-size: 1rem; font-weight: 800; color: var(--success-solid);">${Targets.formatCurrency(w.achieved)}</span>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: var(--slate-600); margin-bottom: 0.2rem;">
+                  <span>Realization</span>
+                  <span>${w.percent}%</span>
+                </div>
+                <div style="height: 6px; background: var(--slate-100); border-radius: 9999px; overflow: hidden;">
+                  <div style="height: 100%; width: ${Math.min(100, w.percent)}%; background: ${w.percent >= 100 ? 'var(--success-solid)' : (w.percent >= 50 ? 'var(--primary-600)' : 'var(--warning-solid)')}; border-radius: 9999px;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem;">
+                <span style="color: var(--slate-400);">Team Milestone</span>
+                <span class="badge ${w.statusClass}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">${w.status}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Reps Breakdown Table
+      const tbody = document.getElementById('mgr-reps-targets-tbody');
+      if (tbody) {
+        if (progress.reps.length) {
+          tbody.innerHTML = progress.reps.map(rep => `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                    ${rep.userName.charAt(0)}
+                  </div>
+                  <div>
+                    <span style="font-weight: 700; color: var(--slate-900); font-size: 0.85rem;">${Utils.escapeHtml(rep.userName)}</span>
+                    <div style="font-size: 0.7rem; color: var(--slate-500);">${rep.assignedLeadCount} Leads Assigned</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 700; color: var(--slate-900);">${Targets.formatCurrency(rep.monthlyTarget)}</td>
+              <td style="font-weight: 800; color: var(--success-solid);">${Targets.formatCurrency(rep.monthlyAchieved)}</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span style="font-weight: 700; font-size: 0.78rem;">${rep.monthlyPercent}%</span>
+                  <div style="width: 50px; height: 5px; background: var(--slate-100); border-radius: 9999px; overflow: hidden;">
+                    <div style="height: 100%; width: ${Math.min(100, rep.monthlyPercent)}%; background: ${rep.monthlyPercent >= 100 ? 'var(--success-solid)' : (rep.monthlyPercent >= 50 ? 'var(--primary-600)' : 'var(--warning-solid)')};"></div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(rep.weeks[0].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(rep.weeks[0].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(rep.weeks[1].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(rep.weeks[1].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(rep.weeks[2].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(rep.weeks[2].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(rep.weeks[3].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(rep.weeks[3].target)}</small></span></td>
+              <td>
+                <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="Targets.openUpdateModal('${rep.userId}', () => renderTeamRevenueTargets('${managerId}'))" title="Update Target">
+                  <i class="fa-solid fa-pen-to-square"></i> Edit
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--slate-400); padding: 1.5rem;">No counselors reporting under this team</td></tr>`;
+        }
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Guard page for Manager or Admin
       if (!Auth.requireAuth(['manager', 'admin'])) return;
@@ -250,11 +448,28 @@
       document.getElementById('mgr-fee-rate').textContent = `${feeSummary.collectionRate}%`;
       document.getElementById('mgr-fee-rate-bar').style.width = `${Math.min(100, feeSummary.collectionRate)}%`;
 
+      // Render Team Revenue Targets (Monthly + 4 Weeks)
+      renderTeamRevenueTargets(currentUser.id);
+
+      // Top Update Target button
+      const updateTargetsBtn = document.getElementById('btn-mgr-update-targets');
+      if (updateTargetsBtn) {
+        updateTargetsBtn.addEventListener('click', () => {
+          Targets.openUpdateModal(null, () => {
+            renderTeamRevenueTargets(currentUser.id);
+          });
+        });
+      }
+
+      window.addEventListener('crmTargetsUpdated', () => {
+        renderTeamRevenueTargets(currentUser.id);
+      });
+
       let interested = 0, prospects = 0, converted = 0;
       teamCustomers.forEach(c => {
         if (c.stage === 'Interested') interested++;
         else if (c.stage === 'Prospect') prospects++;
-        else if (c.stage === 'Converted') converted++;
+        else if (c.stage === 'Enrolled' || c.stage === 'Converted') converted++;
       });
 
       document.getElementById('kpi-mgr-interested').textContent = interested;
@@ -299,7 +514,7 @@
       if (teamReps.length) {
         teamTbody.innerHTML = teamReps.map(rep => {
           const repLeads = teamCustomers.filter(c => c.salespersonId === rep.id);
-          const repClosed = repLeads.filter(c => c.stage === 'Converted').length;
+          const repClosed = repLeads.filter(c => c.stage === 'Enrolled' || c.stage === 'Converted').length;
           return `
             <tr>
               <td>
@@ -309,7 +524,7 @@
                 </div>
               </td>
               <td><strong>${repLeads.length}</strong></td>
-              <td><span class="badge badge-stage-converted">${repClosed}</span></td>
+              <td><span class="badge badge-stage-enrolled">${repClosed}</span></td>
               <td>
                 <a href="leads.html?rep=${rep.id}" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;">
                   View Leads

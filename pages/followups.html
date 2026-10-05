@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Follow-up Schedule — Apex Sales CRM</title>
+  <title>Follow-up Schedule — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -56,7 +56,7 @@
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Student Candidate</th>
+                    <th>Lead / Candidate</th>
                     <th>Career Counselor</th>
                     <th>Date & Time</th>
                     <th>Purpose / Details</th>
@@ -181,6 +181,7 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
   <script src="../js/auth.js"></script>
@@ -250,7 +251,7 @@
               <a href="customer-details.html?id=${f.customerId}" style="font-weight: 700; color: var(--slate-900); text-decoration: none;">
                 ${Utils.escapeHtml(f.customerName)}
               </a>
-              <div style="font-size: 0.72rem; color: var(--slate-500);">${f.customerId} • ${Utils.escapeHtml(stu ? stu.qualification || 'Student' : 'Student')}</div>
+              <div style="font-size: 0.72rem; color: var(--slate-500);">${f.customerId} • ${Utils.escapeHtml(stu ? stu.qualification || 'Lead' : 'Lead')}</div>
             </td>
             <td>
               <div style="font-size: 0.85rem; font-weight: 500; color: var(--slate-800);">${Utils.escapeHtml(f.salespersonName)}</div>

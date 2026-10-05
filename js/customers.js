@@ -1,58 +1,83 @@
 /**
- * STUDENT CAREER & PLACEMENT CRM - CUSTOMERS (STUDENT JOB SEEKERS) MODULE
- * Student CRUD, unique mobile validation, role-based queries, filters, search, and pagination
- * Domain: Student Job Seekers (No company/corporate accounts)
+ * LEAD CAREER & SALES CRM - LEADS / CANDIDATES MODULE
+ * Lead CRUD, unique mobile validation, role-based queries, filters, search, and pagination
+ * Domain: Candidate Job Seekers / Leads
  */
 
 const Customers = {
   /**
-   * Get all students from localStorage
+   * Get all leads from localStorage
    */
   getAll() {
-    return StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+    try {
+      const list = StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+      if (!Array.isArray(list)) return [];
+      return list.filter(c => c && typeof c === 'object' && c.id);
+    } catch (e) {
+      console.error('Error in Customers.getAll:', e);
+      return [];
+    }
   },
 
   /**
-   * Find single student by CRM ID
+   * Find single lead by CRM ID
    */
   getById(id) {
     if (!id) return null;
     const cleanId = String(id).trim().toLowerCase();
     const customers = this.getAll();
-    return customers.find(c => c.id && c.id.toLowerCase() === cleanId) || null;
+    let found = customers.find(c => c && c.id && String(c.id).trim().toLowerCase() === cleanId);
+    if (found) return found;
+
+    // Smart fallback: match numeric ID suffix if format changed (e.g. SM-LD-0001 vs CRM-LEAD-000001 or 0001)
+    const matchNum = cleanId.match(/\d+/);
+    if (matchNum) {
+      const numVal = parseInt(matchNum[0], 10);
+      found = customers.find(c => {
+        if (!c || !c.id) return false;
+        const cNum = String(c.id).match(/\d+/);
+        return cNum && parseInt(cNum[0], 10) === numVal;
+      });
+      if (found) return found;
+    }
+
+    return null;
   },
 
   /**
-   * Get students accessible by current user based on RBAC rules
-   * - Admin: all students
-   * - Manager: students assigned to manager or team members
-   * - Counselor/Sales: only assigned students
+   * Get leads accessible by current user based on RBAC rules
+   * - Admin: all leads
+   * - Manager: leads assigned to manager or team members
+   * - Counselor/Sales: only assigned leads
    */
   getScopedCustomers(customUser = null) {
-    const user = customUser || Auth.getCurrentUser();
+    const user = customUser || (window.Auth && typeof Auth.getCurrentUser === 'function' ? Auth.getCurrentUser() : null);
     const all = this.getAll();
-    if (!user) return [];
+    if (!user) return all;
 
-    if (user.role === 'admin') {
+    const role = (user.role || 'admin').toLowerCase();
+    if (role === 'admin') {
       return all;
     }
 
-    if (user.role === 'manager') {
-      const team = Users.getTeamMembers(user.id).map(m => m.id);
-      return all.filter(c => c.managerId === user.id || team.includes(c.salespersonId));
+    if (role === 'manager') {
+      const team = (window.Users && typeof Users.getTeamMembers === 'function') 
+        ? Users.getTeamMembers(user.id).map(m => m.id)
+        : [];
+      return all.filter(c => c && (c.managerId === user.id || team.includes(c.salespersonId)));
     }
 
     // Counselor / Salesperson
-    return all.filter(c => c.salespersonId === user.id);
+    return all.filter(c => c && c.salespersonId === user.id);
   },
 
   /**
-   * Create a new Student Job Seeker
+   * Create a new Lead / Job Seeker
    */
   create(data) {
     // 1. Validation
     if (!data.name || !String(data.name).trim()) {
-      return { success: false, message: 'Student name is required.' };
+      return { success: false, message: 'Lead name is required.' };
     }
     if (!data.mobile || !Validation.isValidMobile(data.mobile)) {
       return { success: false, message: 'A valid 10-digit mobile number is required.' };
@@ -64,7 +89,7 @@ const Customers = {
       return {
         success: false,
         isDuplicate: true,
-        message: 'A student with this mobile number is already registered.',
+        message: 'A lead with this mobile number is already registered.',
         existingCustomerId: dupCheck.customer.id,
         existingCustomer: dupCheck.customer
       };
@@ -77,7 +102,7 @@ const Customers = {
         return {
           success: false,
           isDuplicate: true,
-          message: 'Alternate mobile number belongs to another registered student.',
+          message: 'Alternate mobile number belongs to another registered lead.',
           existingCustomerId: altDup.customer.id,
           existingCustomer: altDup.customer
         };
@@ -97,7 +122,7 @@ const Customers = {
       if (s) salespersonName = s.name;
     }
 
-    const newId = StorageService.generateId('CRM-STU');
+    const newId = data.id || StorageService.generateId('SM-LD');
     const now = new Date().toISOString();
 
     const newCustomer = {
@@ -127,8 +152,9 @@ const Customers = {
       // CRM Pipeline metadata
       source: data.source || 'Website Inquiry',
       stage: data.stage || 'New Lead',
-      status: data.status || 'Active',
+      status: data.status || (data.stage === 'Pending Closure' ? 'Pending Closure' : (data.stage === 'Enrolled' || data.stage === 'Converted' ? 'Enrolled' : 'Active')),
       priority: data.priority || 'Medium',
+      estimatedRevenue: data.estimatedRevenue !== undefined && data.estimatedRevenue !== null && data.estimatedRevenue !== '' ? Number(data.estimatedRevenue) : (data.stage === 'Pending Closure' ? (Number(data.totalFee) || 45000) : null),
       managerId: data.managerId || null,
       managerName: managerName || null,
       salespersonId: data.salespersonId || null,
@@ -175,28 +201,28 @@ const Customers = {
       toStage: newCustomer.stage,
       changedBy: (Auth.getCurrentUser() || {}).name || 'System',
       changedAt: now,
-      reason: 'Student profile registered'
+      reason: 'Lead profile registered'
     });
     StorageService.saveData(CRM_STORAGE_KEYS.STAGE_HISTORY, stageHistory);
 
     // Activity log
     Activities.log({
-      action: 'Student Registered',
+      action: 'Lead Registered',
       customerId: newId,
-      description: `Registered student: ${newCustomer.name} (${newId}) | ${newCustomer.qualification}, ${newCustomer.college} | Stage: "${newCustomer.stage}"`
+      description: `Registered lead: ${newCustomer.name} (${newId}) | ${newCustomer.qualification}, ${newCustomer.college} | Stage: "${newCustomer.stage}"`
     });
 
     return { success: true, customer: newCustomer };
   },
 
   /**
-   * Update an existing Student
+   * Update an existing Lead
    */
   update(id, updates) {
     const customers = this.getAll();
     const idx = customers.findIndex(c => c.id === id);
     if (idx === -1) {
-      return { success: false, message: 'Student record not found.' };
+      return { success: false, message: 'Lead record not found.' };
     }
 
     const existing = customers[idx];
@@ -208,7 +234,7 @@ const Customers = {
         return {
           success: false,
           isDuplicate: true,
-          message: 'Another student with this mobile number already exists.',
+          message: 'Another lead with this mobile number already exists.',
           existingCustomerId: dupCheck.customer.id
         };
       }
@@ -246,53 +272,53 @@ const Customers = {
         toStage: updates.stage,
         changedBy: (Auth.getCurrentUser() || {}).name || 'System',
         changedAt: now,
-        reason: updates.stageChangeReason || 'Student profile updated'
+        reason: updates.stageChangeReason || 'Lead profile updated'
       });
       StorageService.saveData(CRM_STORAGE_KEYS.STAGE_HISTORY, historyList);
     }
 
     Activities.log({
-      action: 'Student Profile Updated',
+      action: 'Lead Profile Updated',
       customerId: id,
-      description: `Student ${existing.name} (${id}) profile was updated.`
+      description: `Lead ${existing.name} (${id}) profile was updated.`
     });
 
     return { success: true, customer: customers[idx] };
   },
 
   /**
-   * Delete student (Admin only)
+   * Delete lead (Admin only)
    */
   delete(id) {
     const currentUser = Auth.getCurrentUser();
     if (!currentUser || currentUser.role !== 'admin') {
-      return { success: false, message: 'Unauthorized. Only administrators can delete student records.' };
+      return { success: false, message: 'Unauthorized. Only administrators can delete lead records.' };
     }
 
     const customers = this.getAll();
     const customer = customers.find(c => c.id === id);
-    if (!customer) return { success: false, message: 'Student record not found.' };
+    if (!customer) return { success: false, message: 'Lead record not found.' };
 
     const remaining = customers.filter(c => c.id !== id);
     StorageService.saveData(CRM_STORAGE_KEYS.CUSTOMERS, remaining);
 
     Activities.log({
-      action: 'Student Deleted',
+      action: 'Lead Deleted',
       customerId: id,
-      description: `Student ${customer.name} (${id}) was deleted by ${currentUser.name}.`
+      description: `Lead ${customer.name} (${id}) was deleted by ${currentUser.name}.`
     });
 
     return { success: true };
   },
 
   /**
-   * Filter and search student job seekers
+   * Filter and search leads
    * @param {object} params Filter options
    */
   filter(params = {}) {
     let list = this.getScopedCustomers();
 
-    // Text search (Student ID, Name, Mobile, Email, Qualification, College, Skills, Target Role, City)
+    // Text search (Lead ID, Name, Mobile, Email, Qualification, College, Skills, Target Role, City)
     if (params.search) {
       const q = params.search.toLowerCase().trim();
       list = list.filter(c =>

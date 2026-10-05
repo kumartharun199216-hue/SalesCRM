@@ -9,13 +9,17 @@ const Followups = {
    */
   getAll(scoped = true) {
     let list = StorageService.getData(CRM_STORAGE_KEYS.FOLLOWUPS, []);
-    const currentUser = Auth.getCurrentUser();
+    if (!Array.isArray(list)) list = [];
+    list = list.filter(f => f && typeof f === 'object' && f.id);
+    const currentUser = window.Auth ? Auth.getCurrentUser() : null;
 
     if (scoped && currentUser) {
       if (currentUser.role === 'sales') {
         list = list.filter(f => f.salespersonId === currentUser.id);
       } else if (currentUser.role === 'manager') {
-        const teamMemberIds = Users.getTeamMembers(currentUser.id).map(u => u.id);
+        const teamMemberIds = (window.Users && typeof Users.getTeamMembers === 'function') 
+          ? Users.getTeamMembers(currentUser.id).map(u => u.id) 
+          : [];
         teamMemberIds.push(currentUser.id);
         list = list.filter(f => teamMemberIds.includes(f.salespersonId));
       }
@@ -29,8 +33,8 @@ const Followups = {
    */
   getByCustomer(customerId) {
     if (!customerId) return [];
-    const list = StorageService.getData(CRM_STORAGE_KEYS.FOLLOWUPS, []);
-    return list.filter(f => f.customerId === customerId);
+    const list = this.getAll(false);
+    return list.filter(f => f && f.customerId === customerId);
   },
 
   /**
@@ -46,15 +50,17 @@ const Followups = {
     const completed = [];
 
     list.forEach(f => {
+      if (!f) return;
       if (f.status === 'Completed') {
         completed.push(f);
       } else if (f.status === 'Cancelled') {
         // Can be omitted or kept
       } else {
         // Pending status
-        if (f.date === todayStr) {
+        const fDate = f.date || todayStr;
+        if (fDate === todayStr) {
           today.push(f);
-        } else if (f.date < todayStr) {
+        } else if (fDate < todayStr) {
           overdue.push(f);
         } else {
           upcoming.push(f);
@@ -64,8 +70,8 @@ const Followups = {
 
     // Sort appropriately
     today.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
-    upcoming.sort((a, b) => a.date.localeCompare(b.date));
-    overdue.sort((a, b) => a.date.localeCompare(b.date));
+    upcoming.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    overdue.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
     completed.sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
 
     return { today, upcoming, overdue, completed };

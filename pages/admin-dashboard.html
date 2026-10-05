@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard — Apex Sales CRM</title>
+  <title>Admin Dashboard — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -30,7 +30,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
           <div>
             <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em;">Executive Placement Dashboard</h1>
-            <p style="color: var(--slate-500); font-size: 0.875rem;">Student career pipeline, placement metrics, counselor productivity, and hiring conversion velocity.</p>
+            <p style="color: var(--slate-500); font-size: 0.875rem;">Lead pipeline, placement metrics, counselor productivity, and hiring conversion velocity.</p>
           </div>
           <div style="display: flex; gap: 0.75rem;">
             <a href="reports.html" class="btn btn-secondary btn-sm">
@@ -88,13 +88,107 @@
           </div>
         </div>
 
+        <!-- Executive Company Revenue Targets & 4-Week Milestone Breakdown Card -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: #ffffff; border: 1.5px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <!-- Card Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 40px; height: 40px; border-radius: var(--radius-md); background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fa-solid fa-bullseye"></i>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--slate-900); margin: 0;">Company Revenue Targets & 4-Week Progress Breakdown</h3>
+                  <span class="badge" id="admin-target-month-badge" style="background: #eff6ff; color: #1d4ed8; font-weight: 700; border: 1px solid #bfdbfe;">October 2026</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--slate-500);">Monthly targets and 4-week milestones for every employee — update targets, track weekly realization and monthly quota</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn btn-primary btn-sm" id="btn-admin-manage-targets" style="font-size: 0.8rem; font-weight: 700; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);">
+                <i class="fa-solid fa-pen-to-square"></i> Set / Update Employee Targets
+              </button>
+            </div>
+          </div>
+
+          <!-- Company Monthly High-Level Target Summary Strip -->
+          <div style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; margin-bottom: 1.25rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 0.85rem;">
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Company Monthly Target</span>
+                <div style="font-size: 1.55rem; font-weight: 800; color: var(--slate-900); line-height: 1.2;" id="admin-monthly-target-amt">₹0</div>
+                <span style="font-size: 0.7rem; color: var(--slate-400);">Aggregate across sales team</span>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--success-text); text-transform: uppercase; letter-spacing: 0.05em;">Total Achieved Revenue</span>
+                <div style="font-size: 1.55rem; font-weight: 800; color: var(--success-solid); line-height: 1.2;" id="admin-monthly-achieved-amt">₹0</div>
+                <span style="font-size: 0.7rem; color: var(--success-text);">Verified collections this month</span>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Remaining to Target</span>
+                <div style="font-size: 1.55rem; font-weight: 800; color: var(--warning-solid); line-height: 1.2;" id="admin-monthly-remaining-amt">₹0</div>
+                <span style="font-size: 0.7rem; color: var(--warning-text);">Company gap to quota</span>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Overall Realization</span>
+                <div style="font-size: 1.55rem; font-weight: 800; color: #4338ca; line-height: 1.2;" id="admin-company-percent-label">0.0%</div>
+                <span style="font-size: 0.7rem; color: #4338ca;">Monthly run-rate status</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+              <div style="height: 9px; background: rgba(0,0,0,0.08); border-radius: 9999px; overflow: hidden;">
+                <div id="admin-monthly-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 9999px; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Week Milestone Cards Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem;" id="admin-weeks-container">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- All Employees Targets Breakdown Table -->
+          <div style="border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden;">
+            <div style="padding: 0.8rem 1rem; background: var(--slate-50); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+              <span style="font-weight: 700; font-size: 0.825rem; color: var(--slate-800); text-transform: uppercase; letter-spacing: 0.04em;">
+                <i class="fa-solid fa-users" style="color: var(--primary-600);"></i> Employee Targets & 4-Week Achievement Matrix
+              </span>
+              <span style="font-size: 0.75rem; color: var(--slate-500);">Monthly target divided across 4 weeks (Days 1–7, 8–14, 15–21, 22–End)</span>
+            </div>
+            <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+              <table class="table" style="font-size: 0.825rem; margin: 0;">
+                <thead>
+                  <tr style="background: var(--slate-100);">
+                    <th>Employee</th>
+                    <th>Role & Team</th>
+                    <th>Monthly Target</th>
+                    <th>Achieved</th>
+                    <th>Realization %</th>
+                    <th>Week 1</th>
+                    <th>Week 2</th>
+                    <th>Week 3</th>
+                    <th>Week 4</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-reps-targets-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- KPI Cards Grid (Dynamically Calculated) -->
         <div class="kpi-grid">
           <div class="kpi-card kpi-primary">
             <div class="kpi-info">
-              <span class="kpi-label">Total Students</span>
+              <span class="kpi-label">Total Leads</span>
               <span class="kpi-value" id="kpi-total-leads">0</span>
-              <span class="kpi-subtext" style="color: var(--slate-500); font-size: 0.75rem;">All registered students</span>
+              <span class="kpi-subtext" style="color: var(--slate-500); font-size: 0.75rem;">All registered leads</span>
             </div>
             <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
           </div>
@@ -137,7 +231,7 @@
 
           <div class="kpi-card kpi-success">
             <div class="kpi-info">
-              <span class="kpi-label">Converted</span>
+              <span class="kpi-label">Enrolled</span>
               <span class="kpi-value" id="kpi-converted">0</span>
               <span class="kpi-subtext" style="color: var(--success-solid); font-size: 0.75rem;" id="kpi-conv-rate">0% conversion</span>
             </div>
@@ -205,8 +299,8 @@
                       <th>Manager</th>
                       <th>Leads</th>
                       <th>Calls</th>
-                      <th>Converted</th>
-                      <th>Conv. Rate</th>
+                      <th>Enrolled</th>
+                      <th>Enroll Rate</th>
                     </tr>
                   </thead>
                   <tbody id="team-summary-tbody">
@@ -247,12 +341,134 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
+  <script src="../js/targets.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/app.js"></script>
 
   <script>
+    function renderCompanyRevenueTargets() {
+      const month = Targets.getCurrentMonth();
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const [y, m] = month.split('-');
+      const monthLabel = `${monthNames[parseInt(m, 10) - 1]} ${y}`;
+
+      const badge = document.getElementById('admin-target-month-badge');
+      if (badge) badge.textContent = monthLabel;
+
+      const progress = Targets.getCompanyRevenueProgress(month);
+      const allEmployees = Targets.getAllEmployeesProgress(month);
+
+      // Total summary
+      const elTargetAmt = document.getElementById('admin-monthly-target-amt');
+      const elAchievedAmt = document.getElementById('admin-monthly-achieved-amt');
+      const elRemainingAmt = document.getElementById('admin-monthly-remaining-amt');
+      const elPercentLabel = document.getElementById('admin-company-percent-label');
+      const elProgressBar = document.getElementById('admin-monthly-progress-bar');
+
+      if (elTargetAmt) elTargetAmt.textContent = Targets.formatCurrency(progress.totalMonthlyTarget);
+      if (elAchievedAmt) elAchievedAmt.textContent = Targets.formatCurrency(progress.totalMonthlyAchieved);
+      if (elRemainingAmt) elRemainingAmt.textContent = Targets.formatCurrency(progress.teamRemaining);
+      if (elPercentLabel) elPercentLabel.textContent = `${progress.teamPercent}%`;
+      if (elProgressBar) elProgressBar.style.width = `${Math.min(100, progress.teamPercent)}%`;
+
+      // 4-Week Company Milestones
+      const weeksContainer = document.getElementById('admin-weeks-container');
+      if (weeksContainer) {
+        weeksContainer.innerHTML = progress.weeks.map(w => {
+          const isCurr = w.isCurrentWeek;
+          return `
+            <div style="background: white; border: ${isCurr ? '2px solid var(--primary-500)' : '1px solid var(--border-light)'}; border-radius: var(--radius-lg); padding: 0.9rem 1rem; position: relative; ${isCurr ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);' : ''}">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 800; font-size: 0.88rem; color: var(--slate-900);">${w.label}</span>
+                <span style="font-size: 0.7rem; color: var(--slate-500); background: var(--slate-100); padding: 0.15rem 0.45rem; border-radius: 4px;">${w.dateRange}</span>
+              </div>
+              ${isCurr ? `
+                <div style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 0.1rem 0.4rem; border-radius: 9999px; margin-bottom: 0.4rem;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> Current Week
+                </div>
+              ` : ''}
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.72rem; color: var(--slate-500); text-transform: uppercase; font-weight: 700;">Target</span>
+                <span style="font-size: 0.95rem; font-weight: 800; color: var(--slate-900);">${Targets.formatCurrency(w.target)}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.72rem; color: var(--success-text); text-transform: uppercase; font-weight: 700;">Achieved</span>
+                <span style="font-size: 1rem; font-weight: 800; color: var(--success-solid);">${Targets.formatCurrency(w.achieved)}</span>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: var(--slate-600); margin-bottom: 0.2rem;">
+                  <span>Realization</span>
+                  <span>${w.percent}%</span>
+                </div>
+                <div style="height: 6px; background: var(--slate-100); border-radius: 9999px; overflow: hidden;">
+                  <div style="height: 100%; width: ${Math.min(100, w.percent)}%; background: ${w.percent >= 100 ? 'var(--success-solid)' : (w.percent >= 50 ? 'var(--primary-600)' : 'var(--warning-solid)')}; border-radius: 9999px;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem;">
+                <span style="color: var(--slate-400);">Company Milestone</span>
+                <span class="badge ${w.statusClass}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">${w.status}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Organization Employee Table
+      const tbody = document.getElementById('admin-reps-targets-tbody');
+      if (tbody) {
+        const users = Users.getAll();
+        tbody.innerHTML = allEmployees.map(emp => {
+          const uObj = users.find(u => u.id === emp.userId);
+          const mgrName = uObj && uObj.managerId ? (users.find(m => m.id === uObj.managerId)?.name || 'Manager') : (emp.role === 'manager' ? 'Branch Head' : 'Direct / Unassigned');
+          const roleBadge = emp.role === 'manager' 
+            ? '<span class="badge badge-purple" style="font-size: 0.65rem;">Manager</span>' 
+            : '<span class="badge badge-primary" style="font-size: 0.65rem;">Sales Counselor</span>';
+
+          return `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; background: ${emp.role === 'manager' ? '#9333ea' : '#4f46e5'}; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                    ${emp.userName.charAt(0)}
+                  </div>
+                  <div>
+                    <span style="font-weight: 700; color: var(--slate-900); font-size: 0.85rem;">${Utils.escapeHtml(emp.userName)}</span>
+                    <div style="font-size: 0.7rem; color: var(--slate-500);">${emp.assignedLeadCount} Leads • ${emp.totalPaymentsRecorded} Collections</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div>${roleBadge}</div>
+                <div style="font-size: 0.7rem; color: var(--slate-500); margin-top: 0.15rem;">${Utils.escapeHtml(mgrName)}</div>
+              </td>
+              <td style="font-weight: 700; color: var(--slate-900);">${Targets.formatCurrency(emp.monthlyTarget)}</td>
+              <td style="font-weight: 800; color: var(--success-solid);">${Targets.formatCurrency(emp.monthlyAchieved)}</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span style="font-weight: 700; font-size: 0.78rem;">${emp.monthlyPercent}%</span>
+                  <div style="width: 50px; height: 5px; background: var(--slate-100); border-radius: 9999px; overflow: hidden;">
+                    <div style="height: 100%; width: ${Math.min(100, emp.monthlyPercent)}%; background: ${emp.monthlyPercent >= 100 ? 'var(--success-solid)' : (emp.monthlyPercent >= 50 ? 'var(--primary-600)' : 'var(--warning-solid)')};"></div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(emp.weeks[0].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(emp.weeks[0].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(emp.weeks[1].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(emp.weeks[1].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(emp.weeks[2].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(emp.weeks[2].target)}</small></span></td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-700);">${Targets.formatCurrency(emp.weeks[3].achieved)} / <small style="color: var(--slate-400);">${Targets.formatCurrency(emp.weeks[3].target)}</small></span></td>
+              <td>
+                <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.55rem; font-size: 0.75rem;" onclick="Targets.openUpdateModal('${emp.userId}', renderCompanyRevenueTargets)" title="Update Target for ${Utils.escapeHtml(emp.userName)}">
+                  <i class="fa-solid fa-pen-to-square"></i> Update
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Guard page for Admin
       if (!Auth.requireAuth(['admin'])) return;
@@ -260,7 +476,19 @@
       // 2. Initialize layout
       App.init('dashboard');
 
-      // 3. Populate dynamic KPI cards
+      // 3. Render Company Revenue Targets & 4-Week Roadmap
+      renderCompanyRevenueTargets();
+
+      const adminUpdateTargetsBtn = document.getElementById('btn-admin-manage-targets');
+      if (adminUpdateTargetsBtn) {
+        adminUpdateTargetsBtn.addEventListener('click', () => {
+          Targets.openUpdateModal(null, renderCompanyRevenueTargets);
+        });
+      }
+
+      window.addEventListener('crmTargetsUpdated', renderCompanyRevenueTargets);
+
+      // 4. Populate dynamic KPI cards
       const kpis = Reports.getDashboardKPIs();
       document.getElementById('dash-fee-booked').textContent = Payments.formatCurrency(kpis.totalPlacementFees || 0);
       document.getElementById('dash-fee-collected').textContent = Payments.formatCurrency(kpis.totalCashCollected || 0);
@@ -318,11 +546,11 @@
       new Chart(ctxDoughnut, {
         type: 'doughnut',
         data: {
-          labels: ['Active Pipeline', 'Converted Deals', 'Lost / Inactive'],
+          labels: ['Active Pipeline', 'Enrolled Leads', 'Lost / Inactive'],
           datasets: [{
             data: [
-              customers.filter(c => !['Converted', 'Lost', 'Not Interested'].includes(c.stage)).length,
-              kpis.converted,
+              customers.filter(c => !['Enrolled', 'Converted', 'Lost', 'Not Interested'].includes(c.stage)).length,
+              kpis.enrolled !== undefined ? kpis.enrolled : kpis.converted,
               kpis.lost + kpis.notInterested
             ],
             backgroundColor: ['#6366f1', '#10b981', '#ef4444'],
@@ -354,7 +582,7 @@
             <td><span style="color: var(--slate-600);">${Utils.escapeHtml(rep.managerName)}</span></td>
             <td><strong>${rep.leadsAssigned}</strong></td>
             <td>${rep.callsMade}</td>
-            <td><span class="badge badge-stage-converted">${rep.convertedCount}</span></td>
+            <td><span class="badge badge-stage-enrolled">${rep.enrolledCount !== undefined ? rep.enrolledCount : rep.convertedCount}</span></td>
             <td><strong style="color: var(--success-solid);">${rep.conversionRate}</strong></td>
           </tr>
         `).join('');

@@ -8,7 +8,14 @@ const Users = {
    * Get all registered CRM users
    */
   getAll() {
-    return StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
+    try {
+      const list = StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
+      if (!Array.isArray(list)) return [];
+      return list.filter(u => u && typeof u === 'object' && u.id);
+    } catch (e) {
+      console.error('Error in Users.getAll:', e);
+      return [];
+    }
   },
 
   /**

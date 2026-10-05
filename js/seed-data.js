@@ -1,24 +1,26 @@
 /**
- * SALES CRM - SEED DATA MODULE (STUDENT JOB SEEKER EDITION)
- * Real-world student candidate database for education, placement, and job training CRM
+ * SALES CRM - SEED DATA MODULE (LEAD MANAGEMENT EDITION)
+ * Real-world lead candidate database for education, placement, and job training CRM
  */
 
 const SeedData = {
   // Stage Definitions
   STAGES: [
     'Cold Calling',
+    'Not Connected',
     'New Lead',
     'Contacted',
     'Interested',
     'Prospect',
     'Follow-up',
     'Negotiation',
-    'Converted',
+    'Pending Closure',
+    'Enrolled',
     'Not Interested',
     'Lost'
   ],
 
-  // Lead Sources for Students
+  // Lead Sources
   SOURCES: [
     'Cold Calling / Raw Database',
     'Excel / CSV Upload',
@@ -182,11 +184,11 @@ const SeedData = {
     ];
   },
 
-  // Real Student Job Seekers
+  // Real Leads / Candidate Job Seekers
   getCustomers() {
-    const rawStudents = [
+    const rawLeads = [
       {
-        id: 'CRM-STU-000001',
+        id: 'SM-LD-0001',
         name: 'Aditya Deshmukh',
         mobile: '9821100001',
         altMobile: '9821100002',
@@ -216,7 +218,7 @@ const SeedData = {
         notes: 'Actively searching for backend developer roles in Pune/Mumbai. Looking for placement guaranteed program.'
       },
       {
-        id: 'CRM-STU-000002',
+        id: 'SM-LD-0002',
         name: 'Nandita Iyer',
         mobile: '9821100003',
         altMobile: '',
@@ -246,7 +248,7 @@ const SeedData = {
         notes: 'Reviewing job assistance enrollment fee and interview guarantee terms.'
       },
       {
-        id: 'CRM-STU-000003',
+        id: 'SM-LD-0003',
         name: 'Harish Nambiar',
         mobile: '9821100004',
         altMobile: '9821100005',
@@ -262,8 +264,8 @@ const SeedData = {
         state: 'Tamil Nadu',
         country: 'India',
         source: 'Referral',
-        stage: 'Converted',
-        status: 'Converted',
+        stage: 'Enrolled',
+        status: 'Enrolled',
         priority: 'High',
         managerId: 'USR-M01',
         managerName: 'Rajesh Sharma',
@@ -276,7 +278,7 @@ const SeedData = {
         notes: 'Enrolled in Premium Career Placement Track. Cleared first client round.'
       },
       {
-        id: 'CRM-STU-000004',
+        id: 'SM-LD-0004',
         name: 'Kunal Aggarwal',
         mobile: '9821100006',
         altMobile: '',
@@ -306,7 +308,7 @@ const SeedData = {
         notes: 'Interested in fintech corporate sales roles. Needs mock interview coaching.'
       },
       {
-        id: 'CRM-STU-000005',
+        id: 'SM-LD-0005',
         name: 'Deepak Chawla',
         mobile: '9821100007',
         altMobile: '9821100008',
@@ -336,7 +338,7 @@ const SeedData = {
         notes: 'Submitted resume and portfolio dashboard. Scheduled interview screening call.'
       },
       {
-        id: 'CRM-STU-000006',
+        id: 'SM-LD-0006',
         name: 'Anand Bajpayee',
         mobile: '9821100009',
         altMobile: '',
@@ -366,7 +368,7 @@ const SeedData = {
         notes: 'Registered online via job alert page. Verification call pending.'
       },
       {
-        id: 'CRM-STU-000007',
+        id: 'SM-LD-0007',
         name: 'Meera Kapoor',
         mobile: '9821100010',
         altMobile: '',
@@ -396,7 +398,7 @@ const SeedData = {
         notes: 'Follow-up on automation testing certification requirement before sending to client.'
       },
       {
-        id: 'CRM-STU-000008',
+        id: 'SM-LD-0008',
         name: 'Ramanathan G.',
         mobile: '9821100011',
         altMobile: '',
@@ -426,7 +428,7 @@ const SeedData = {
         notes: 'Decided to pursue Master of Science in Germany.'
       },
       {
-        id: 'CRM-STU-000009',
+        id: 'SM-LD-0009',
         name: 'Saurabh Sinha',
         mobile: '9821100012',
         altMobile: '9821100013',
@@ -457,7 +459,7 @@ const SeedData = {
       },
       // Team 2 (Priya Patel with Vikram Singh & Neha Gupta)
       {
-        id: 'CRM-STU-000010',
+        id: 'SM-LD-0010',
         name: 'Kavita Menon',
         mobile: '9821100014',
         altMobile: '',
@@ -487,7 +489,7 @@ const SeedData = {
         notes: 'High coding aptitude score (94/100). Looking for fast-track product startup opportunities.'
       },
       {
-        id: 'CRM-STU-000011',
+        id: 'SM-LD-0011',
         name: 'Varun Grover',
         mobile: '9821100015',
         altMobile: '',
@@ -517,7 +519,7 @@ const SeedData = {
         notes: 'Built 2 live apps on Play Store. Ready for direct technical round.'
       },
       {
-        id: 'CRM-STU-000012',
+        id: 'SM-LD-0012',
         name: 'Rakesh Khurana',
         mobile: '9821100016',
         altMobile: '9821100017',
@@ -547,7 +549,7 @@ const SeedData = {
         notes: 'Prefers infrastructure construction firms in NCR or Mumbai.'
       },
       {
-        id: 'CRM-STU-000013',
+        id: 'SM-LD-0013',
         name: 'Sunil Mathur',
         mobile: '9821100018',
         altMobile: '',
@@ -563,8 +565,8 @@ const SeedData = {
         state: 'Maharashtra',
         country: 'India',
         source: 'Social Media / Instagram',
-        stage: 'Converted',
-        status: 'Converted',
+        stage: 'Enrolled',
+        status: 'Enrolled',
         priority: 'High',
         managerId: 'USR-M02',
         managerName: 'Priya Patel',
@@ -577,7 +579,7 @@ const SeedData = {
         notes: 'Placed at Digital Media Agency as Junior Web Developer (₹4.2 LPA).'
       },
       {
-        id: 'CRM-STU-000014',
+        id: 'SM-LD-0014',
         name: 'Vipin Saxena',
         mobile: '9821100019',
         altMobile: '',
@@ -607,7 +609,7 @@ const SeedData = {
         notes: 'New graduate registered for automotive sector openings.'
       },
       {
-        id: 'CRM-STU-000015',
+        id: 'SM-LD-0015',
         name: 'Sujata Bose',
         mobile: '9821100020',
         altMobile: '9821100021',
@@ -638,7 +640,7 @@ const SeedData = {
       },
       // Team 3 (Amit Verma with Rahul Mehta & Pooja Joshi)
       {
-        id: 'CRM-STU-000016',
+        id: 'SM-LD-0016',
         name: 'Tariq Siddiqui',
         mobile: '9821100022',
         altMobile: '',
@@ -668,7 +670,7 @@ const SeedData = {
         notes: 'Shortlisted by 2 cyber security audit consultancies. Final salary negotiation.'
       },
       {
-        id: 'CRM-STU-000017',
+        id: 'SM-LD-0017',
         name: 'Devendra Pandey',
         mobile: '9821100023',
         altMobile: '',
@@ -698,7 +700,7 @@ const SeedData = {
         notes: 'Wants to join e-commerce fulfillment operations in Pune or Mumbai.'
       },
       {
-        id: 'CRM-STU-000018',
+        id: 'SM-LD-0018',
         name: 'Alok Srivastava',
         mobile: '9821100024',
         altMobile: '9821100025',
@@ -728,7 +730,7 @@ const SeedData = {
         notes: 'Shared GitHub repository with 4 mobile projects. Impressive code quality.'
       },
       {
-        id: 'CRM-STU-000019',
+        id: 'SM-LD-0019',
         name: 'Shalini Nair',
         mobile: '9821100026',
         altMobile: '',
@@ -744,8 +746,8 @@ const SeedData = {
         state: 'Maharashtra',
         country: 'India',
         source: 'Walk-in / Campus Drive',
-        stage: 'Converted',
-        status: 'Converted',
+        stage: 'Enrolled',
+        status: 'Enrolled',
         priority: 'High',
         managerId: 'USR-M03',
         managerName: 'Amit Verma',
@@ -758,7 +760,7 @@ const SeedData = {
         notes: 'Successfully placed at Investment Advisory firm (₹4.8 LPA).'
       },
       {
-        id: 'CRM-STU-000020',
+        id: 'SM-LD-0020',
         name: 'Prateek Jain',
         mobile: '9821100027',
         altMobile: '',
@@ -787,9 +789,9 @@ const SeedData = {
         nextFollowUp: '2026-10-02T15:00:00.000Z',
         notes: 'Inquiry received regarding campus placement drives in Gujarat industrial zone.'
       },
-      // Additional Diverse Student Job Seekers (21 - 32)
+      // Additional Diverse Leads (21 - 32)
       {
-        id: 'CRM-STU-000021',
+        id: 'SM-LD-0021',
         name: 'Gautam Singhania',
         mobile: '9821100028',
         altMobile: '9821100029',
@@ -819,7 +821,7 @@ const SeedData = {
         notes: 'Top tier competitive programmer (Codeforces Candidate Master). Looking for high packages.'
       },
       {
-        id: 'CRM-STU-000022',
+        id: 'SM-LD-0022',
         name: 'Chandrika Sen',
         mobile: '9821100030',
         altMobile: '',
@@ -849,7 +851,7 @@ const SeedData = {
         notes: 'Outstanding Behance portfolio. Wants edtech or SaaS consumer apps.'
       },
       {
-        id: 'CRM-STU-000023',
+        id: 'SM-LD-0023',
         name: 'Bhaskar Rao',
         mobile: '9821100031',
         altMobile: '',
@@ -879,7 +881,7 @@ const SeedData = {
         notes: 'Counseling call to prepare for upcoming campus interview round.'
       },
       {
-        id: 'CRM-STU-000024',
+        id: 'SM-LD-0024',
         name: 'Manoj Tiwari',
         mobile: '9821100032',
         altMobile: '',
@@ -909,7 +911,7 @@ const SeedData = {
         notes: 'Joined family dealership business.'
       },
       {
-        id: 'CRM-STU-000025',
+        id: 'SM-LD-0025',
         name: 'Ankita Roy',
         mobile: '9821100033',
         altMobile: '9821100034',
@@ -939,7 +941,7 @@ const SeedData = {
         notes: 'Interested in placement drives for IT consulting firms.'
       },
       {
-        id: 'CRM-STU-000026',
+        id: 'SM-LD-0026',
         name: 'Suresh Raina',
         mobile: '9821100035',
         altMobile: '',
@@ -969,7 +971,7 @@ const SeedData = {
         notes: 'Exploratory call completed. Shared upcoming drive details.'
       },
       {
-        id: 'CRM-STU-000027',
+        id: 'SM-LD-0027',
         name: 'Farhan Akhtar',
         mobile: '9821100036',
         altMobile: '',
@@ -985,8 +987,8 @@ const SeedData = {
         state: 'Delhi',
         country: 'India',
         source: 'Referral',
-        stage: 'Converted',
-        status: 'Converted',
+        stage: 'Enrolled',
+        status: 'Enrolled',
         priority: 'High',
         managerId: 'USR-M01',
         managerName: 'Rajesh Sharma',
@@ -999,7 +1001,7 @@ const SeedData = {
         notes: 'Offer letter received from Cloud Tech Partner (₹6.5 LPA).'
       },
       {
-        id: 'CRM-STU-000028',
+        id: 'SM-LD-0028',
         name: 'Tanvi Shah',
         mobile: '9821100037',
         altMobile: '9821100038',
@@ -1029,7 +1031,7 @@ const SeedData = {
         notes: 'Submitted showreel link. Client review in progress.'
       },
       {
-        id: 'CRM-STU-000029',
+        id: 'SM-LD-0029',
         name: 'Nikhil Agarwal',
         mobile: '9821100039',
         altMobile: '',
@@ -1059,7 +1061,7 @@ const SeedData = {
         notes: 'Campus drive candidate seeking robotics startup roles in Bengaluru.'
       },
       {
-        id: 'CRM-STU-000030',
+        id: 'SM-LD-0030',
         name: 'Bhavna Kulkarni',
         mobile: '9821100040',
         altMobile: '',
@@ -1089,7 +1091,7 @@ const SeedData = {
         notes: 'Wants guidance on consulting case interviews.'
       },
       {
-        id: 'CRM-STU-000031',
+        id: 'SM-LD-0031',
         name: 'Karthik Raja',
         mobile: '9821100041',
         altMobile: '',
@@ -1119,7 +1121,7 @@ const SeedData = {
         notes: 'Opted for government exam preparation.'
       },
       {
-        id: 'CRM-STU-000032',
+        id: 'SM-LD-0032',
         name: 'Preeti Deshmukh',
         mobile: '9821100042',
         altMobile: '9821100043',
@@ -1149,7 +1151,7 @@ const SeedData = {
         notes: 'Scheduled for technical assessment test with hiring partner.'
       },
       {
-        id: 'CRM-STU-000033',
+        id: 'SM-LD-0033',
         name: 'Kunal Joshi',
         mobile: '9821100051',
         altMobile: '',
@@ -1176,10 +1178,10 @@ const SeedData = {
         updatedAt: '2026-09-30T08:00:00.000Z',
         lastContacted: null,
         nextFollowUp: null,
-        notes: 'Raw uncalled student from campus placement database list. Ready for first outreach.'
+        notes: 'Raw uncalled lead from campus placement database list. Ready for first outreach.'
       },
       {
-        id: 'CRM-STU-000034',
+        id: 'SM-LD-0034',
         name: 'Aishwarya Patil',
         mobile: '9821100052',
         altMobile: '',
@@ -1209,7 +1211,7 @@ const SeedData = {
         notes: 'Needs initial counseling call on Python Full Stack placement track.'
       },
       {
-        id: 'CRM-STU-000035',
+        id: 'SM-LD-0035',
         name: 'Rohit Kulkarni',
         mobile: '9821100053',
         altMobile: '',
@@ -1239,7 +1241,7 @@ const SeedData = {
         notes: 'Raw candidate list from job portal export. Not dialed yet.'
       },
       {
-        id: 'CRM-STU-000036',
+        id: 'SM-LD-0036',
         name: 'Sneha Nair',
         mobile: '9821100054',
         altMobile: '',
@@ -1269,18 +1271,18 @@ const SeedData = {
         notes: 'Uncontacted raw candidate from Anna University campus drive database.'
       }
     ];
-    return rawStudents.map((s, idx) => this.enrichStudentWithFee(s, idx));
+    return rawLeads.map((s, idx) => this.enrichLeadWithFee(s, idx));
   },
 
   /**
    * Assign customized placement fee structures, installment milestones, and payment plans
    */
-  enrichStudentWithFee(student, index) {
-    const stage = (student.stage || '').toLowerCase();
+  enrichLeadWithFee(lead, index) {
+    const stage = (lead.stage || '').toLowerCase();
     
-    // Fee differs per student based on specialization track:
+    // Fee differs per lead based on specialization track:
     let fee = 45000;
-    const role = (student.targetRole || '').toLowerCase();
+    const role = (lead.targetRole || '').toLowerCase();
     if (role.includes('senior') || role.includes('full stack') || role.includes('devops') || role.includes('cloud')) {
       fee = 60000;
     } else if (role.includes('data') || role.includes('ai') || role.includes('ml') || role.includes('embedded')) {
@@ -1306,7 +1308,7 @@ const SeedData = {
       return fmt(copy);
     };
 
-    if (stage === 'converted' || stage.includes('placed')) {
+    if (stage === 'enrolled' || stage === 'converted' || stage.includes('placed')) {
       // 100% Collected (Placement Complete)
       plan = (index % 2 === 0) ? 'Full Upfront' : '2 Installments';
       paid = fee;
@@ -1322,7 +1324,7 @@ const SeedData = {
             paidDate: addDays(today, -25),
             status: 'Paid',
             paymentMode: 'UPI / Online',
-            transactionRef: `TXN-UPF-${student.id.replace('CRM-STU-', '')}`
+            transactionRef: `TXN-UPF-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}`
           }
         ];
       } else {
@@ -1338,7 +1340,7 @@ const SeedData = {
             paidDate: addDays(today, -30),
             status: 'Paid',
             paymentMode: 'UPI / Online',
-            transactionRef: `TXN-P1-${student.id.replace('CRM-STU-', '')}`
+            transactionRef: `TXN-P1-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}`
           },
           {
             id: 'INST-2',
@@ -1349,7 +1351,7 @@ const SeedData = {
             paidDate: addDays(today, -5),
             status: 'Paid',
             paymentMode: 'Net Banking',
-            transactionRef: `TXN-P2-${student.id.replace('CRM-STU-', '')}`
+            transactionRef: `TXN-P2-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}`
           }
         ];
       }
@@ -1374,7 +1376,7 @@ const SeedData = {
             paidDate: addDays(today, -20),
             status: 'Paid',
             paymentMode: 'UPI / Online',
-            transactionRef: `TXN-P1-${student.id.replace('CRM-STU-', '')}`
+            transactionRef: `TXN-P1-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}`
           },
           {
             id: 'INST-2',
@@ -1385,7 +1387,7 @@ const SeedData = {
             paidDate: secondPaid ? addDays(today, -3) : null,
             status: secondPaid ? 'Paid' : (isInst2Overdue ? 'Overdue' : 'Pending'),
             paymentMode: secondPaid ? 'Net Banking' : null,
-            transactionRef: secondPaid ? `TXN-P2-${student.id.replace('CRM-STU-', '')}` : null
+            transactionRef: secondPaid ? `TXN-P2-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}` : null
           },
           {
             id: 'INST-3',
@@ -1415,7 +1417,7 @@ const SeedData = {
             paidDate: addDays(today, -15),
             status: 'Paid',
             paymentMode: (index % 2 === 0) ? 'UPI / Online' : 'Credit / Debit Card',
-            transactionRef: `TXN-P1-${student.id.replace('CRM-STU-', '')}`
+            transactionRef: `TXN-P1-${lead.id.replace('SM-LD-', '').replace('CRM-STU-', '')}`
           },
           {
             id: 'INST-2',
@@ -1467,13 +1469,17 @@ const SeedData = {
       ];
     }
 
-    student.totalFee = fee;
-    student.paidAmount = paid;
-    student.pendingAmount = Math.max(0, fee - paid);
-    student.paymentPlan = plan;
-    student.paymentStatus = status;
-    student.installments = installments;
-    return student;
+    lead.totalFee = fee;
+    lead.paidAmount = paid;
+    lead.pendingAmount = Math.max(0, fee - paid);
+    lead.paymentPlan = plan;
+    lead.paymentStatus = status;
+    lead.installments = installments;
+    return lead;
+  },
+
+  enrichStudentWithFee(lead, index) {
+    return this.enrichLeadWithFee(lead, index);
   },
 
   /**
@@ -1501,7 +1507,7 @@ const SeedData = {
             transactionRef: inst.transactionRef || `TXN-UPI-${pad}`,
             installmentTitle: inst.title || 'Placement Fee Installment',
             installmentId: inst.id,
-            notes: 'Official student fee installment payment recorded.',
+            notes: 'Official fee installment payment recorded.',
             receivedBy: c.salespersonName || 'Alexander Wright',
             salespersonId: c.salespersonId,
             salespersonName: c.salespersonName,
@@ -1520,7 +1526,7 @@ const SeedData = {
     return [
       {
         id: 'CRM-FLW-000001',
-        customerId: 'CRM-STU-000001',
+        customerId: 'SM-LD-0001',
         customerName: 'Aditya Deshmukh',
         salespersonId: 'USR-S01',
         salespersonName: 'Arun Kumar',
@@ -1535,7 +1541,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000002',
-        customerId: 'CRM-STU-000002',
+        customerId: 'SM-LD-0002',
         customerName: 'Nandita Iyer',
         salespersonId: 'USR-S01',
         salespersonName: 'Arun Kumar',
@@ -1550,7 +1556,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000003',
-        customerId: 'CRM-STU-000004',
+        customerId: 'SM-LD-0004',
         customerName: 'Kunal Aggarwal',
         salespersonId: 'USR-S02',
         salespersonName: 'Sneha Rao',
@@ -1565,7 +1571,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000004',
-        customerId: 'CRM-STU-000007',
+        customerId: 'SM-LD-0007',
         customerName: 'Meera Kapoor',
         salespersonId: 'USR-S02',
         salespersonName: 'Sneha Rao',
@@ -1580,7 +1586,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000005',
-        customerId: 'CRM-STU-000015',
+        customerId: 'SM-LD-0015',
         customerName: 'Sujata Bose',
         salespersonId: 'USR-S04',
         salespersonName: 'Neha Gupta',
@@ -1595,7 +1601,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000006',
-        customerId: 'CRM-STU-000010',
+        customerId: 'SM-LD-0010',
         customerName: 'Kavita Menon',
         salespersonId: 'USR-S03',
         salespersonName: 'Vikram Singh',
@@ -1610,7 +1616,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000007',
-        customerId: 'CRM-STU-000016',
+        customerId: 'SM-LD-0016',
         customerName: 'Tariq Siddiqui',
         salespersonId: 'USR-S05',
         salespersonName: 'Rahul Mehta',
@@ -1625,7 +1631,7 @@ const SeedData = {
       },
       {
         id: 'CRM-FLW-000008',
-        customerId: 'CRM-STU-000003',
+        customerId: 'SM-LD-0003',
         customerName: 'Harish Nambiar',
         salespersonId: 'USR-S01',
         salespersonName: 'Arun Kumar',
@@ -1645,7 +1651,7 @@ const SeedData = {
     return [
       {
         id: 'CRM-CALL-000001',
-        customerId: 'CRM-STU-000001',
+        customerId: 'SM-LD-0001',
         customerName: 'Aditya Deshmukh',
         salespersonId: 'USR-S01',
         salespersonName: 'Arun Kumar',
@@ -1657,7 +1663,7 @@ const SeedData = {
       },
       {
         id: 'CRM-CALL-000002',
-        customerId: 'CRM-STU-000002',
+        customerId: 'SM-LD-0002',
         customerName: 'Nandita Iyer',
         salespersonId: 'USR-S01',
         salespersonName: 'Arun Kumar',
@@ -1669,7 +1675,7 @@ const SeedData = {
       },
       {
         id: 'CRM-CALL-000003',
-        customerId: 'CRM-STU-000004',
+        customerId: 'SM-LD-0004',
         customerName: 'Kunal Aggarwal',
         salespersonId: 'USR-S02',
         salespersonName: 'Sneha Rao',
@@ -1686,7 +1692,7 @@ const SeedData = {
     return [
       {
         id: 'CRM-STAGE-000001',
-        customerId: 'CRM-STU-000001',
+        customerId: 'SM-LD-0001',
         customerName: 'Aditya Deshmukh',
         fromStage: 'New Lead',
         toStage: 'Contacted',
@@ -1696,17 +1702,17 @@ const SeedData = {
       },
       {
         id: 'CRM-STAGE-000002',
-        customerId: 'CRM-STU-000001',
+        customerId: 'SM-LD-0001',
         customerName: 'Aditya Deshmukh',
         fromStage: 'Contacted',
         toStage: 'Interested',
         changedBy: 'Arun Kumar',
         changedAt: '2026-09-28T14:30:00.000Z',
-        reason: 'Student confirmed readiness for placement track'
+        reason: 'Lead confirmed readiness for placement track'
       },
       {
         id: 'CRM-STAGE-000003',
-        customerId: 'CRM-STU-000002',
+        customerId: 'SM-LD-0002',
         customerName: 'Nandita Iyer',
         fromStage: 'Interested',
         toStage: 'Prospect',
@@ -1716,7 +1722,7 @@ const SeedData = {
       },
       {
         id: 'CRM-STAGE-000004',
-        customerId: 'CRM-STU-000002',
+        customerId: 'SM-LD-0002',
         customerName: 'Nandita Iyer',
         fromStage: 'Prospect',
         toStage: 'Negotiation',
@@ -1726,10 +1732,10 @@ const SeedData = {
       },
       {
         id: 'CRM-STAGE-000005',
-        customerId: 'CRM-STU-000003',
+        customerId: 'SM-LD-0003',
         customerName: 'Harish Nambiar',
         fromStage: 'Negotiation',
-        toStage: 'Converted',
+        toStage: 'Enrolled',
         changedBy: 'Arun Kumar',
         changedAt: '2026-09-25T16:00:00.000Z',
         reason: 'Successfully placed as Full Stack Python Developer'
@@ -1741,14 +1747,14 @@ const SeedData = {
     return [
       {
         id: 'CRM-NOTE-000001',
-        customerId: 'CRM-STU-000001',
+        customerId: 'SM-LD-0001',
         text: 'Strong DSA problem solving foundation. Preferred location: Pune / Mumbai hybrid.',
         createdBy: 'Arun Kumar',
         createdAt: '2026-09-28T14:35:00.000Z'
       },
       {
         id: 'CRM-NOTE-000002',
-        customerId: 'CRM-STU-000002',
+        customerId: 'SM-LD-0002',
         text: 'Wants frontend roles at venture-funded startups in Bengaluru.',
         createdBy: 'Arun Kumar',
         createdAt: '2026-09-29T11:25:00.000Z'
@@ -1764,7 +1770,7 @@ const SeedData = {
         role: 'admin',
         action: 'System Initialized',
         customerId: null,
-        description: 'Apex Student Placement CRM initialized with 32 candidate job seekers.',
+        description: 'Skill Move CRM initialized with 32 candidate leads.',
         timestamp: '2026-09-25T09:00:00.000Z'
       },
       {
@@ -1772,8 +1778,8 @@ const SeedData = {
         user: 'Arun Kumar',
         role: 'sales',
         action: 'Customer Created',
-        customerId: 'CRM-STU-000001',
-        description: 'Enrolled student job seeker: Aditya Deshmukh (B.Tech CS, VJTI Mumbai)',
+        customerId: 'SM-LD-0001',
+        description: 'Enrolled lead: Aditya Deshmukh (B.Tech CS, VJTI Mumbai)',
         timestamp: '2026-09-25T10:15:00.000Z'
       },
       {
@@ -1781,7 +1787,7 @@ const SeedData = {
         user: 'Arun Kumar',
         role: 'sales',
         action: 'Stage Changed',
-        customerId: 'CRM-STU-000003',
+        customerId: 'SM-LD-0003',
         description: 'Changed stage for Harish Nambiar to Converted (Placed)',
         timestamp: '2026-09-25T16:00:00.000Z'
       },
@@ -1790,7 +1796,7 @@ const SeedData = {
         user: 'Arun Kumar',
         role: 'sales',
         action: 'Follow-up Completed',
-        customerId: 'CRM-STU-000003',
+        customerId: 'SM-LD-0003',
         description: 'Completed placement follow-up for Harish Nambiar',
         timestamp: '2026-09-25T16:05:00.000Z'
       },
@@ -1799,8 +1805,8 @@ const SeedData = {
         user: 'Rajesh Sharma',
         role: 'manager',
         action: 'Lead Assigned',
-        customerId: 'CRM-STU-000006',
-        description: 'Student Anand Bajpayee assigned to Arun Kumar by Rajesh Sharma',
+        customerId: 'SM-LD-0006',
+        description: 'Lead Anand Bajpayee assigned to Arun Kumar by Rajesh Sharma',
         timestamp: '2026-09-29T16:05:00.000Z'
       }
     ];
@@ -1808,6 +1814,8 @@ const SeedData = {
 
   getCounters() {
     return {
+      'SM-LD': 36,
+      'CRM-LEAD': 32,
       'CRM-STU': 32,
       'CRM-CUST': 32,
       'CRM-FLW': 8,
@@ -1822,18 +1830,20 @@ const SeedData = {
 
   getSettings() {
     return {
-      crmName: 'Apex Student Career CRM',
+      crmName: 'Skill Move CRM',
       currency: '₹ (INR)',
       timezone: 'Asia/Kolkata (IST)',
       leadStages: [
         'Cold Calling',
+        'Not Connected',
         'New Lead',
         'Contacted',
         'Interested',
         'Prospect',
         'Follow-up',
         'Negotiation',
-        'Converted',
+        'Pending Closure',
+        'Enrolled',
         'Not Interested',
         'Lost'
       ],
@@ -1851,43 +1861,347 @@ const SeedData = {
     };
   },
 
+  getTargets() {
+    const currentMonth = '2026-10';
+    return [
+      {
+        id: 'TGT-USR-S01-2026-10',
+        userId: 'USR-S01',
+        userName: 'Arun Kumar',
+        role: 'sales',
+        managerId: 'USR-M01',
+        managerName: 'Rajesh Sharma',
+        month: currentMonth,
+        monthlyRevenueTarget: 200000,
+        week1Target: 50000,
+        week2Target: 50000,
+        week3Target: 50000,
+        week4Target: 50000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-S02-2026-10',
+        userId: 'USR-S02',
+        userName: 'Sneha Rao',
+        role: 'sales',
+        managerId: 'USR-M01',
+        managerName: 'Rajesh Sharma',
+        month: currentMonth,
+        monthlyRevenueTarget: 220000,
+        week1Target: 55000,
+        week2Target: 55000,
+        week3Target: 55000,
+        week4Target: 55000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-S03-2026-10',
+        userId: 'USR-S03',
+        userName: 'Vikram Singh',
+        role: 'sales',
+        managerId: 'USR-M02',
+        managerName: 'Priya Patel',
+        month: currentMonth,
+        monthlyRevenueTarget: 200000,
+        week1Target: 50000,
+        week2Target: 50000,
+        week3Target: 50000,
+        week4Target: 50000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-S04-2026-10',
+        userId: 'USR-S04',
+        userName: 'Neha Gupta',
+        role: 'sales',
+        managerId: 'USR-M02',
+        managerName: 'Priya Patel',
+        month: currentMonth,
+        monthlyRevenueTarget: 180000,
+        week1Target: 45000,
+        week2Target: 45000,
+        week3Target: 45000,
+        week4Target: 45000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-S05-2026-10',
+        userId: 'USR-S05',
+        userName: 'Rahul Mehta',
+        role: 'sales',
+        managerId: 'USR-M03',
+        managerName: 'Amit Verma',
+        month: currentMonth,
+        monthlyRevenueTarget: 240000,
+        week1Target: 60000,
+        week2Target: 60000,
+        week3Target: 60000,
+        week4Target: 60000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-S06-2026-10',
+        userId: 'USR-S06',
+        userName: 'Pooja Joshi',
+        role: 'sales',
+        managerId: 'USR-M03',
+        managerName: 'Amit Verma',
+        month: currentMonth,
+        monthlyRevenueTarget: 200000,
+        week1Target: 50000,
+        week2Target: 50000,
+        week3Target: 50000,
+        week4Target: 50000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-M01-2026-10',
+        userId: 'USR-M01',
+        userName: 'Rajesh Sharma',
+        role: 'manager',
+        managerId: null,
+        managerName: null,
+        month: currentMonth,
+        monthlyRevenueTarget: 800000,
+        week1Target: 200000,
+        week2Target: 200000,
+        week3Target: 200000,
+        week4Target: 200000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-M02-2026-10',
+        userId: 'USR-M02',
+        userName: 'Priya Patel',
+        role: 'manager',
+        managerId: null,
+        managerName: null,
+        month: currentMonth,
+        monthlyRevenueTarget: 750000,
+        week1Target: 187500,
+        week2Target: 187500,
+        week3Target: 187500,
+        week4Target: 187500,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      },
+      {
+        id: 'TGT-USR-M03-2026-10',
+        userId: 'USR-M03',
+        userName: 'Amit Verma',
+        role: 'manager',
+        managerId: null,
+        managerName: null,
+        month: currentMonth,
+        monthlyRevenueTarget: 800000,
+        week1Target: 200000,
+        week2Target: 200000,
+        week3Target: 200000,
+        week4Target: 200000,
+        isDefault: false,
+        updatedBy: 'Alexander Wright (Admin)',
+        updatedAt: '2026-10-01T09:00:00.000Z'
+      }
+    ];
+  },
+
+  getTemplates() {
+    return [
+      {
+        id: 'TMPL-EM-001',
+        name: 'Skill Move Placement Track Brochure',
+        type: 'email',
+        category: 'Outreach & Brochure',
+        subject: 'Skill Move Career Accelerator - Full Placement Track Brochure & Syllabus for {{lead_name}}',
+        body: `Dear {{lead_name}},\n\nGreetings from Skill Move Career Accelerator!\n\nWe reviewed your academic profile ({{qualification}} from {{college}}) and are delighted to confirm that you qualify for our Corporate Placement Assistance Program for the {{target_role}} track.\n\nKey Highlights of Skill Move Track:\n- 100% Interview Guarantee across 150+ verified hiring partners\n- Dedicated Career Counselor: {{counselor_name}}\n- Technical Assessment & Mock Interview Drills\n- Transparent Fee Agreement: {{total_fee}} (Installment options available)\n\nWe have attached our comprehensive 2026 Placement Track Brochure & Syllabus for your review.\n\nPlease reply to this email or call/WhatsApp me directly at {{counselor_phone}} to schedule your 1-on-1 counseling slot.\n\nWarm Regards,\n{{counselor_name}}\nCareer Counselor | Skill Move\nPhone: {{counselor_phone}} | Email: {{counselor_email}}`,
+        hasAttachment: true,
+        attachmentName: 'Skill_Move_Placement_Track_Brochure_2026.pdf',
+        attachmentSize: '1.4 MB',
+        createdBy: 'Alexander Wright',
+        createdByRole: 'admin',
+        createdAt: '2026-09-01T09:00:00.000Z'
+      },
+      {
+        id: 'TMPL-EM-002',
+        name: 'Official Fee Structure & Installment Terms',
+        type: 'email',
+        category: 'Fee & Agreement',
+        subject: 'Official Placement Agreement & Fee Schedule for {{lead_name}} ({{lead_id}})',
+        body: `Dear {{lead_name}},\n\nFollowing our counseling discussion regarding your enrollment in the {{target_role}} program, please find your customized fee payment schedule below:\n\n- Candidate Name: {{lead_name}}\n- Registered Lead ID: {{lead_id}}\n- Target Career Path: {{target_role}}\n- Agreed Total Placement Fee: {{total_fee}}\n- Payment Plan: {{payment_plan}}\n- Paid to Date: {{paid_amount}}\n- Remaining Balance: {{pending_fee}}\n\nPlease review the attached official fee policy and payment milestone agreement.\n\nIf you have any questions regarding payment modes or receipts, reach out to me anytime.\n\nSincerely,\n{{counselor_name}}\nSkill Move Placement Cell`,
+        hasAttachment: true,
+        attachmentName: 'Skill_Move_Fee_Structure_and_Agreement.pdf',
+        attachmentSize: '820 KB',
+        createdBy: 'Rajesh Sharma',
+        createdByRole: 'manager',
+        createdAt: '2026-09-02T10:00:00.000Z'
+      },
+      {
+        id: 'TMPL-EM-003',
+        name: 'Technical Assessment & Interview Invitation',
+        type: 'email',
+        category: 'Interview & Evaluation',
+        subject: 'Action Required: Technical Evaluation Session for {{lead_name}} - Skill Move',
+        body: `Hello {{lead_name}},\n\nYour profile has been shortlisted for client interview preparation with our tech hiring partners!\n\nAs the next step, we would like to schedule a 30-minute technical evaluation covering key competencies required for {{target_role}}.\n\nSession Details:\n- Mode: Live Video / Online Assessment\n- Mentor: Lead Technical Evaluator\n- Focus: Core Problem Solving & Project Review\n\nPlease confirm your preferred time slot for this week by replying to this email or texting me at {{counselor_phone}}.\n\nBest of luck!\n{{counselor_name}}\nSkill Move`,
+        hasAttachment: false,
+        attachmentName: '',
+        attachmentSize: '',
+        createdBy: 'Alexander Wright',
+        createdByRole: 'admin',
+        createdAt: '2026-09-05T11:00:00.000Z'
+      },
+      {
+        id: 'TMPL-EM-004',
+        name: 'Pending Closure - Fast-Track Offer Letter Pass',
+        type: 'email',
+        category: 'Closing & Enrollment',
+        subject: 'Final Enrollment Opportunity: Corporate Hiring Pass for {{lead_name}}',
+        body: `Dear {{lead_name}},\n\nWe have reached the final stage of our placement counseling for your {{target_role}} track. A priority seat is currently reserved under Lead ID {{lead_id}}.\n\nOur client partners in {{city}} are conducting exclusive recruitment drives this month. To confirm your enrollment pass and release your interview roster, please review the attached guidelines and complete your enrollment milestone.\n\nFee Summary:\n- Total Program Fee: {{total_fee}}\n- Milestone Due: {{pending_fee}}\n\nLooking forward to seeing you in the upcoming cohort!\n\nBest Regards,\n{{counselor_name}}\nSkill Move`,
+        hasAttachment: true,
+        attachmentName: 'Job_Description_FullStack_Backend.pdf',
+        attachmentSize: '640 KB',
+        createdBy: 'Rajesh Sharma',
+        createdByRole: 'manager',
+        createdAt: '2026-09-10T14:00:00.000Z'
+      },
+      // WhatsApp Templates
+      {
+        id: 'TMPL-WA-001',
+        name: 'Quick Intro & Placement Track Brochure',
+        type: 'whatsapp',
+        category: 'Initial Outreach',
+        subject: 'Placement Brochure Introduction',
+        body: `Hello {{lead_name}}! 🚀 This is {{counselor_name}} from Skill Move.\n\nI reviewed your profile ({{qualification}} from {{college}}) and saw you are looking for a {{target_role}} role.\n\nWe have upcoming exclusive hiring drives with top tech companies! I am attaching our Placement Track Brochure & Syllabus for you.\n\nWhen would be a good time for a quick 5-min briefing call today?`,
+        hasAttachment: true,
+        attachmentName: 'Skill_Move_Placement_Track_Brochure_2026.pdf',
+        attachmentSize: '1.4 MB',
+        createdBy: 'Alexander Wright',
+        createdByRole: 'admin',
+        createdAt: '2026-09-01T09:30:00.000Z'
+      },
+      {
+        id: 'TMPL-WA-002',
+        name: 'Technical Assessment Follow-up',
+        type: 'whatsapp',
+        category: 'Counseling Follow-up',
+        subject: 'Assessment Follow-up',
+        body: `Hi {{lead_name}}, hope you are having a productive week!\n\nJust checking in regarding your {{target_role}} career prep. Your candidate ID is {{lead_id}}.\n\nCan we schedule your 15-minute technical evaluation tomorrow? Reply with your preferred slot.\n\n- {{counselor_name}}, Skill Move`,
+        hasAttachment: false,
+        attachmentName: '',
+        attachmentSize: '',
+        createdBy: 'Alexander Wright',
+        createdByRole: 'admin',
+        createdAt: '2026-09-03T12:00:00.000Z'
+      },
+      {
+        id: 'TMPL-WA-003',
+        name: 'Fee Milestone & Installment Agreement',
+        type: 'whatsapp',
+        category: 'Fee & Payment',
+        subject: 'Milestone Details',
+        body: `Dear {{lead_name}}, here are your placement fee milestone details from Skill Move:\n\nTotal Fee: {{total_fee}}\nPaid: {{paid_amount}}\nPending: {{pending_fee}}\n\nI have attached the official installment agreement and fee policy. Let me know if you need any assistance with payment modes! 🙏`,
+        hasAttachment: true,
+        attachmentName: 'Skill_Move_Fee_Structure_and_Agreement.pdf',
+        attachmentSize: '820 KB',
+        createdBy: 'Rajesh Sharma',
+        createdByRole: 'manager',
+        createdAt: '2026-09-04T15:00:00.000Z'
+      },
+      {
+        id: 'TMPL-WA-004',
+        name: 'Hiring Partner Urgent Drive Invitation',
+        type: 'whatsapp',
+        category: 'Interview Drive',
+        subject: 'Hiring Drive Alert',
+        body: `🌟 Urgent Update for {{lead_name}}!\n\nA direct client recruitment drive for {{target_role}} in {{city}} / Remote has opened for immediate hiring.\n\nPlease check the attached Job Description and reply *YES* to confirm your spot for the interview roster today!`,
+        hasAttachment: true,
+        attachmentName: 'Job_Description_FullStack_Backend.pdf',
+        attachmentSize: '640 KB',
+        createdBy: 'Alexander Wright',
+        createdByRole: 'admin',
+        createdAt: '2026-09-08T16:00:00.000Z'
+      }
+    ];
+  },
+
   resetDemoData() {
-    const currentUser = StorageService.getData(CRM_STORAGE_KEYS.CURRENT_USER, null);
+    try {
+      const currentUser = StorageService.getData(CRM_STORAGE_KEYS.CURRENT_USER, null);
 
-    StorageService.saveData(CRM_STORAGE_KEYS.USERS, this.getUsers());
-    StorageService.saveData(CRM_STORAGE_KEYS.CUSTOMERS, this.getCustomers());
-    StorageService.saveData(CRM_STORAGE_KEYS.FOLLOWUPS, this.getFollowUps());
-    StorageService.saveData(CRM_STORAGE_KEYS.CALLS, this.getCalls());
-    StorageService.saveData(CRM_STORAGE_KEYS.STAGE_HISTORY, this.getStageHistory());
-    StorageService.saveData(CRM_STORAGE_KEYS.NOTES, this.getNotes());
-    StorageService.saveData(CRM_STORAGE_KEYS.ACTIVITIES, this.getActivities());
-    StorageService.saveData(CRM_STORAGE_KEYS.PAYMENTS, this.getPayments());
-    StorageService.saveData(CRM_STORAGE_KEYS.COUNTERS, this.getCounters());
-    StorageService.saveData(CRM_STORAGE_KEYS.SETTINGS, this.getSettings());
+      StorageService.saveData(CRM_STORAGE_KEYS.USERS, this.getUsers());
+      StorageService.saveData(CRM_STORAGE_KEYS.CUSTOMERS, this.getCustomers());
+      StorageService.saveData(CRM_STORAGE_KEYS.FOLLOWUPS, this.getFollowUps());
+      StorageService.saveData(CRM_STORAGE_KEYS.CALLS, this.getCalls());
+      StorageService.saveData(CRM_STORAGE_KEYS.STAGE_HISTORY, this.getStageHistory());
+      StorageService.saveData(CRM_STORAGE_KEYS.NOTES, this.getNotes());
+      StorageService.saveData(CRM_STORAGE_KEYS.ACTIVITIES, this.getActivities());
+      StorageService.saveData(CRM_STORAGE_KEYS.PAYMENTS, this.getPayments());
+      StorageService.saveData(CRM_STORAGE_KEYS.COUNTERS, this.getCounters());
+      StorageService.saveData(CRM_STORAGE_KEYS.SETTINGS, this.getSettings());
+      StorageService.saveData(CRM_STORAGE_KEYS.TARGETS, this.getTargets());
+      StorageService.saveData(CRM_STORAGE_KEYS.TEMPLATES, this.getTemplates());
 
-    if (currentUser) {
-      StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, currentUser);
-    } else {
-      StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, this.getUsers()[0]);
+      if (currentUser && currentUser.id && currentUser.status === 'Active') {
+        StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, currentUser);
+      } else {
+        StorageService.saveData(CRM_STORAGE_KEYS.CURRENT_USER, this.getUsers()[0]);
+      }
+
+      console.log('Skill Move CRM demo data initialized successfully.');
+    } catch (err) {
+      console.error('Error in SeedData.resetDemoData:', err);
     }
-
-    console.log('Student Career CRM demo data initialized successfully.');
   },
 
   initIfEmpty() {
-    const users = StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
-    const customers = StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+    try {
+      const users = StorageService.getData(CRM_STORAGE_KEYS.USERS, []);
+      const customers = StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+      const targets = StorageService.getData(CRM_STORAGE_KEYS.TARGETS, []);
+      const templates = StorageService.getData(CRM_STORAGE_KEYS.TEMPLATES, []);
 
-    // Also re-seed if existing data had company instead of student qualification, missing Cold Calling, or missing payments
-    const hasOldCompanyData = customers.some(c => c.id && c.id.startsWith('CRM-CUST'));
-    const missingColdCalling = customers.length > 0 && !customers.some(c => c.stage === 'Cold Calling');
-    const missingFeeData = customers.length > 0 && !customers.some(c => (Number(c.totalFee) || 0) > 0);
+      const validUsers = Array.isArray(users) ? users.filter(u => u && typeof u === 'object' && u.id) : [];
+      const validCustomers = Array.isArray(customers) ? customers.filter(c => c && typeof c === 'object' && c.id) : [];
+      const validTargets = Array.isArray(targets) ? targets.filter(t => t && typeof t === 'object' && t.id) : [];
+      const validTemplates = Array.isArray(templates) ? templates.filter(t => t && typeof t === 'object' && t.id) : [];
 
-    if (!users.length || !customers.length || hasOldCompanyData || missingColdCalling || missingFeeData) {
-      this.resetDemoData();
+      // Also re-seed if existing data has non SM-LD- ID format, old Converted stage, missing Cold Calling, missing targets, or missing templates
+      const hasOldIdFormat = validCustomers.some(c => c.id && !c.id.startsWith('SM-LD-'));
+      const hasOldConverted = validCustomers.some(c => c.stage === 'Converted');
+      const missingColdCalling = validCustomers.length > 0 && !validCustomers.some(c => c.stage === 'Cold Calling');
+      const missingFeeData = validCustomers.length > 0 && !validCustomers.some(c => (Number(c.totalFee) || 0) > 0);
+
+      if (!validUsers.length || !validCustomers.length || hasOldIdFormat || hasOldConverted || missingColdCalling || missingFeeData || !validTargets.length || !validTemplates.length) {
+        this.resetDemoData();
+      }
+    } catch (e) {
+      console.warn('initIfEmpty encountered an issue, auto-resetting demo data:', e);
+      try {
+        this.resetDemoData();
+      } catch (err) {
+        console.error('Failed to reset demo data:', err);
+      }
     }
   }
 };
 
 window.SeedData = SeedData;
-SeedData.initIfEmpty();
+try {
+  SeedData.initIfEmpty();
+} catch (e) {
+  console.warn('Top-level SeedData.initIfEmpty caught error:', e);
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leads & Assignments — Apex Sales CRM</title>
+  <title>Leads & Assignments — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -96,7 +96,7 @@
                     <th style="width: 40px; text-align: center;">
                       <input type="checkbox" id="select-all-leads" style="cursor: pointer;">
                     </th>
-                    <th>Student Candidate</th>
+                    <th>Lead / Candidate</th>
                     <th>Target Role & Skills</th>
                     <th>Contact Info</th>
                     <th>Stage</th>
@@ -156,6 +156,7 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
   <script src="../js/auth.js"></script>
@@ -272,7 +273,7 @@
       const canAssign = currentUser.role === 'admin' || currentUser.role === 'manager';
 
       if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--slate-400); padding: 2.5rem;">No student candidates match your filter criteria</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--slate-400); padding: 2.5rem;">No leads match your filter criteria</td></tr>`;
         return;
       }
 
@@ -285,7 +286,7 @@
             <a href="customer-details.html?id=${c.id}" style="font-weight: 700; color: var(--slate-900); text-decoration: none;">
               ${Utils.escapeHtml(c.name)}
             </a>
-            <div style="font-size: 0.72rem; color: var(--slate-500);">${c.id} • ${Utils.escapeHtml(c.qualification || 'Student')} (${Utils.escapeHtml(c.college || '—')})</div>
+            <div style="font-size: 0.72rem; color: var(--slate-500);">${c.id} • ${Utils.escapeHtml(c.qualification || 'Lead')} (${Utils.escapeHtml(c.college || '—')})</div>
           </td>
           <td>
             <div style="font-size: 0.825rem; font-weight: 600; color: var(--slate-800);">${Utils.escapeHtml(c.targetRole || 'Software Engineer')}</div>
@@ -310,14 +311,22 @@
           <td>
             <span style="font-size: 0.75rem; color: var(--slate-500);">${Utils.formatDate(c.createdAt)}</span>
           </td>
-          <td style="text-align: right;">
-            ${canAssign ? `
-              <button class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="openSingleAssign('${c.id}')">
-                <i class="fa-solid fa-user-pen"></i> Assign
+          <td style="text-align: right; white-space: nowrap;">
+            <div style="display: inline-flex; gap: 0.35rem; align-items: center; justify-content: flex-end;">
+              <button class="btn btn-icon btn-secondary" onclick="Communication.openWhatsApp('${c.id}')" title="Send WhatsApp Template" style="padding: 0.25rem 0.45rem; font-size: 0.8rem; color: #25d366;">
+                <i class="fa-brands fa-whatsapp"></i>
               </button>
-            ` : `
-              <a href="customer-details.html?id=${c.id}" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;">View</a>
-            `}
+              <button class="btn btn-icon btn-secondary" onclick="Communication.initiateEmail('${c.id}')" title="Send Email Template" style="padding: 0.25rem 0.45rem; font-size: 0.8rem; color: var(--primary-600);">
+                <i class="fa-solid fa-envelope"></i>
+              </button>
+              ${canAssign ? `
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="openSingleAssign('${c.id}')">
+                  <i class="fa-solid fa-user-pen"></i> Assign
+                </button>
+              ` : `
+                <a href="customer-details.html?id=${c.id}" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;">View</a>
+              `}
+            </div>
           </td>
         </tr>
       `).join('');

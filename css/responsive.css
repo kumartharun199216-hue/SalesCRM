@@ -149,7 +149,7 @@ body.sidebar-open {
     grid-template-columns: 1fr;
   }
 
-  /* Student Details Tab 1 Split Stacking */
+  /* Lead Details Tab 1 Split Stacking */
   #tab-overview > div[style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
     gap: 1.25rem !important;
@@ -302,7 +302,7 @@ body.sidebar-open {
     min-width: 0 !important;
   }
 
-  /* Student 360° Profile Hero Card */
+  /* Lead 360° Profile Hero Card */
   .profile-hero {
     padding: 1.25rem 1rem !important;
     border-radius: var(--radius-lg) !important;

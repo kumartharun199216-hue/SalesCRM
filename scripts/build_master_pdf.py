@@ -80,7 +80,7 @@ def build_cover_page():
 
         <div class="cover-badge-row">
             <span class="badge badge-accent">Version 2.0.0</span>
-            <span class="badge badge-teal">Student Job-Seeker Domain</span>
+            <span class="badge badge-teal">Lead Management Domain</span>
             <span class="badge badge-purple">Placement Fee Ledger</span>
             <span class="badge badge-amber">Production Pre-Flight</span>
         </div>

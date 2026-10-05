@@ -57,7 +57,7 @@ const App = {
       },
       {
         key: 'customers',
-        label: 'Students Directory',
+        label: 'Leads Directory',
         icon: 'fa-user-graduate',
         href: `${p}customers.html`,
         roles: ['admin', 'manager', 'sales']
@@ -113,11 +113,18 @@ const App = {
         roles: ['admin', 'manager']
       },
       {
+        key: 'templates',
+        label: 'Message Templates',
+        icon: 'fa-envelope-open-text',
+        roles: ['admin', 'manager'],
+        isAction: true
+      },
+      {
         key: 'settings',
         label: 'System Settings',
         icon: 'fa-sliders',
         href: `${p}settings.html`,
-        roles: ['admin']
+        roles: ['admin', 'manager']
       }
     ];
 
@@ -127,11 +134,11 @@ const App = {
     sidebarEl.innerHTML = `
       <div class="crm-sidebar-brand">
         <div class="crm-brand-logo">
-          <i class="fa-solid fa-graduation-cap"></i>
+          <i class="fa-solid fa-arrow-trend-up"></i>
         </div>
         <div class="crm-brand-info">
-          <h2>Career Apex</h2>
-          <span>Student Placement CRM</span>
+          <h2>Skill Move</h2>
+          <span>Lead Management CRM</span>
         </div>
         <button class="crm-sidebar-close-btn" id="crm-sidebar-close-btn" aria-label="Close Sidebar" title="Close Sidebar">
           <i class="fa-solid fa-xmark"></i>
@@ -175,6 +182,16 @@ const App = {
             `;
           }
 
+          if (item.isAction) {
+            return `
+              <div class="crm-nav-item" id="nav-item-${item.key}" style="cursor: pointer; user-select: none;">
+                <i class="fa-solid ${item.icon}"></i>
+                <span>${item.label}</span>
+                <span class="badge" style="margin-left: auto; font-size: 0.65rem; background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4);">Admin/Mgr</span>
+              </div>
+            `;
+          }
+
           return `
             <a href="${item.href}" class="crm-nav-item ${item.key === activeKey ? 'active' : ''}">
               <i class="fa-solid ${item.icon}"></i>
@@ -187,10 +204,10 @@ const App = {
 
       <div class="crm-sidebar-footer" style="padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); background-color: rgba(0, 0, 0, 0.15);">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-          <img src="${user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}" alt="${user.name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-500);">
+          <img src="${currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80'}" alt="${currentUser.name || 'User'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-500);">
           <div style="overflow: hidden;">
-            <div style="font-size: 0.825rem; font-weight: 600; color: #fff; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${Utils.escapeHtml(user.name)}</div>
-            <div style="font-size: 0.7rem; color: var(--slate-400);">${Utils.escapeHtml(user.role.toUpperCase())}</div>
+            <div style="font-size: 0.825rem; font-weight: 600; color: #fff; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${Utils.escapeHtml(currentUser.name || 'User')}</div>
+            <div style="font-size: 0.7rem; color: var(--slate-400);">${Utils.escapeHtml((currentUser.role || 'Admin').toUpperCase())}</div>
           </div>
         </div>
         <button class="btn btn-secondary btn-sm" id="global-logout-btn" style="width: 100%; justify-content: center; background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.12); color: #fff;">
@@ -215,6 +232,13 @@ const App = {
         pipelineSubmenuEl.classList.remove('collapsed');
         pipelineWrapper.classList.remove('collapsed');
         localStorage.setItem('crm_pipeline_submenu_collapsed', 'false');
+      }
+    });
+
+    document.getElementById('nav-item-templates')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (window.Templates && typeof Templates.openTemplateManagerModal === 'function') {
+        Templates.openTemplateManagerModal();
       }
     });
 
@@ -243,29 +267,39 @@ const App = {
    */
   getPipelineSubmenu(user, isPagesDir) {
     const p = isPagesDir ? '' : 'pages/';
-    const customers = Customers.getScopedCustomers(user);
+    const rawCustomers = (window.Customers && typeof Customers.getScopedCustomers === 'function')
+      ? Customers.getScopedCustomers(user)
+      : [];
+    const customers = Array.isArray(rawCustomers) ? rawCustomers.filter(c => c && typeof c === 'object') : [];
     const stages = [
       { name: 'All Leads', param: 'all', icon: 'fa-layer-group' },
       { name: 'Cold Calling', param: 'Cold Calling', icon: 'fa-phone-slash' },
+      { name: 'Not Connected', param: 'Not Connected', icon: 'fa-phone-flip' },
       { name: 'New Lead', param: 'New Lead', icon: 'fa-sparkles' },
       { name: 'Contacted', param: 'Contacted', icon: 'fa-phone' },
       { name: 'Interested', param: 'Interested', icon: 'fa-fire' },
       { name: 'Prospect', param: 'Prospect', icon: 'fa-bullseye' },
       { name: 'Follow-up', param: 'Follow-up', icon: 'fa-clock' },
       { name: 'Negotiation', param: 'Negotiation', icon: 'fa-handshake' },
-      { name: 'Converted', param: 'Converted', icon: 'fa-trophy' },
+      { name: 'Pending Closure', param: 'Pending Closure', icon: 'fa-file-invoice-dollar' },
+      { name: 'Enrolled', param: 'Enrolled', icon: 'fa-trophy' },
       { name: 'Not Interested', param: 'Not Interested', icon: 'fa-ban' },
       { name: 'Lost', param: 'Lost', icon: 'fa-circle-xmark' }
     ];
 
-    const currentUrl = new URL(window.location.href);
+    let currentUrl;
+    try {
+      currentUrl = new URL(window.location.href);
+    } catch (e) {
+      currentUrl = { pathname: '', searchParams: { get: () => '' } };
+    }
     const isPipelinePage = currentUrl.pathname.includes('pipeline.html');
     const activeStageParam = currentUrl.searchParams.get('stage') || (isPipelinePage ? 'all' : '');
 
     return stages.map(st => {
       const count = st.param === 'all'
         ? customers.length
-        : customers.filter(c => c.stage === st.param).length;
+        : customers.filter(c => c && (c.stage === st.param || (st.param === 'Enrolled' && c.stage === 'Converted'))).length;
       const isActive = isPipelinePage && activeStageParam.toLowerCase() === st.param.toLowerCase();
 
       return {
@@ -295,15 +329,22 @@ const App = {
           <div style="position: relative; width: 100%;">
             <div class="search-box-container" style="position: relative; width: 100%;">
               <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--slate-400);"></i>
-              <input type="text" id="global-search-input" class="form-control" placeholder="Quick search students by ID, name, college, degree, skills, phone..." style="padding-left: 2.5rem; border-radius: var(--radius-full); background-color: var(--slate-100); border-color: transparent;">
+              <input type="text" id="global-search-input" class="form-control" placeholder="Quick search leads by ID, name, college, degree, skills, phone..." style="padding-left: 2.5rem; border-radius: var(--radius-full); background-color: var(--slate-100); border-color: transparent;">
             </div>
             <div id="global-search-results" class="quick-search-results"></div>
           </div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 0.75rem;">
+          ${(role === 'admin' || role === 'manager') ? `
+            <button class="btn btn-secondary btn-sm" id="global-templates-btn" title="Create & Manage Communication Templates">
+              <i class="fa-solid fa-envelope-open-text" style="color: var(--primary-600);"></i>
+              <span class="hide-mobile">Templates</span>
+            </button>
+          ` : ''}
+
           <button class="btn btn-primary btn-sm" id="global-add-customer-btn">
-            <i class="fa-solid fa-user-plus"></i> <span class="hide-mobile">Add Student</span>
+            <i class="fa-solid fa-user-plus"></i> <span class="hide-mobile">Add Lead</span>
           </button>
 
           <!-- Quick Persona Switcher for effortless demo testing -->
@@ -348,6 +389,12 @@ const App = {
         </div>
       </div>
     `;
+
+    document.getElementById('global-templates-btn')?.addEventListener('click', () => {
+      if (window.Templates && typeof Templates.openTemplateManagerModal === 'function') {
+        Templates.openTemplateManagerModal();
+      }
+    });
 
     // Persona dropdown toggling
     const personaBtn = document.getElementById('persona-switcher-btn');
@@ -428,7 +475,7 @@ const App = {
       if (!matches.length) {
         resultsContainer.innerHTML = `
           <div style="padding: 1rem; text-align: center; color: var(--slate-500); font-size: 0.85rem;">
-            No students found matching "<strong>${Utils.escapeHtml(q)}</strong>"
+            No leads found matching "<strong>${Utils.escapeHtml(q)}</strong>"
           </div>
         `;
         resultsContainer.classList.add('show');
@@ -439,7 +486,7 @@ const App = {
         <div class="quick-search-item" onclick="window.location.href='${custDetailUrl}${c.id}'">
           <div>
             <div style="font-weight: 600; font-size: 0.85rem; color: var(--slate-800);">${Utils.escapeHtml(c.name)}</div>
-            <div style="font-size: 0.75rem; color: var(--slate-500);">${c.id} • ${Utils.escapeHtml(c.qualification || 'Student')} (${Utils.escapeHtml(c.college || '—')}) • ${c.mobile}</div>
+            <div style="font-size: 0.75rem; color: var(--slate-500);">${c.id} • ${Utils.escapeHtml(c.qualification || 'Lead')} (${Utils.escapeHtml(c.college || '—')}) • ${c.mobile}</div>
           </div>
           <div>
             ${Utils.getStageBadge(c.stage)}
@@ -472,7 +519,7 @@ const App = {
       modal.innerHTML = `
         <div class="modal-dialog modal-lg">
           <div class="modal-header">
-            <h3 class="modal-title"><i class="fa-solid fa-user-graduate" style="color: var(--primary-600); margin-right: 0.5rem;"></i>Register Student Job Seeker</h3>
+            <h3 class="modal-title"><i class="fa-solid fa-user-plus" style="color: var(--primary-600); margin-right: 0.5rem;"></i>Add Lead</h3>
             <button class="modal-close-btn" id="add-cust-modal-close"><i class="fa-solid fa-xmark"></i></button>
           </div>
           <div class="modal-body">
@@ -483,12 +530,12 @@ const App = {
               </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
                 <div class="form-group">
-                  <label class="form-label">Student Full Name <span class="required">*</span></label>
+                  <label class="form-label">Lead Full Name <span class="required">*</span></label>
                   <input type="text" class="form-control" id="add-cust-name" placeholder="e.g. Aditya Deshmukh" required>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Email Address</label>
-                  <input type="email" class="form-control" id="add-cust-email" placeholder="student@example.com">
+                  <input type="email" class="form-control" id="add-cust-email" placeholder="lead@example.com">
                 </div>
               </div>
 
@@ -612,11 +659,15 @@ const App = {
                   <label class="form-label">Initial Stage</label>
                   <select class="form-select" id="add-cust-stage">
                     <option value="Cold Calling">Cold Calling (Raw Data - Uncontacted)</option>
+                    <option value="Not Connected">Not Connected</option>
                     <option value="New Lead" selected>New Lead</option>
                     <option value="Contacted">Contacted</option>
                     <option value="Interested">Interested</option>
                     <option value="Prospect">Prospect</option>
                     <option value="Follow-up">Follow-up</option>
+                    <option value="Negotiation">Negotiation</option>
+                    <option value="Pending Closure">Pending Closure</option>
+                    <option value="Enrolled">Enrolled</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -631,7 +682,7 @@ const App = {
 
               <div class="form-group">
                 <label class="form-label">Counseling Notes & Career Aspirations</label>
-                <textarea class="form-control" id="add-cust-notes" rows="2" placeholder="Student background, immediate availability, preferred interview timings..."></textarea>
+                <textarea class="form-control" id="add-cust-notes" rows="2" placeholder="Lead background, immediate availability, preferred interview timings..."></textarea>
               </div>
 
               <div id="add-cust-error-alert" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); background-color: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); font-size: 0.85rem; margin-top: 0.5rem;"></div>
@@ -640,7 +691,7 @@ const App = {
           <div class="modal-footer">
             <button class="btn btn-secondary" id="add-cust-modal-cancel">Cancel</button>
             <button class="btn btn-primary" id="add-cust-modal-submit">
-              <i class="fa-solid fa-floppy-disk"></i> Register Student
+              <i class="fa-solid fa-floppy-disk"></i> Add Lead
             </button>
           </div>
         </div>
@@ -725,7 +776,7 @@ const App = {
 
       // Validation
       if (!name) {
-        Validation.setError(document.getElementById('add-cust-name'), 'Student name is required.');
+        Validation.setError(document.getElementById('add-cust-name'), 'Lead name is required.');
         return;
       }
       if (!mobile || !Validation.isValidMobile(mobile)) {
@@ -766,12 +817,12 @@ const App = {
           const isPagesDir = window.location.pathname.includes('/pages/');
           const detailUrl = `${isPagesDir ? '' : 'pages/'}customer-details.html?id=${result.existingCustomerId}`;
           errorAlert.innerHTML = `
-            <strong>Duplicate Detected:</strong> A student with mobile <strong>${mobile}</strong> is already registered:
+            <strong>Duplicate Detected:</strong> A lead with mobile <strong>${mobile}</strong> is already registered:
             <br>
             <strong>${Utils.escapeHtml(result.existingCustomer.name)}</strong> (${result.existingCustomerId})
             <br>
             <a href="${detailUrl}" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem; display: inline-flex;">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Existing Student Profile
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Existing Lead Profile
             </a>
           `;
           errorAlert.style.display = 'block';
@@ -782,10 +833,10 @@ const App = {
         return;
       }
 
-      Toast.success(`Student registered: ${result.customer.name} (${result.customer.id})`);
+      Toast.success(`Lead registered: ${result.customer.name} (${result.customer.id})`);
       closeModal();
 
-      // Redirect to customer/student details page
+      // Redirect to customer/lead details page
       const isPagesDir = window.location.pathname.includes('/pages/');
       const detailUrl = `${isPagesDir ? '' : 'pages/'}customer-details.html?id=${result.customer.id}`;
       setTimeout(() => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales Rep Workspace — Apex Sales CRM</title>
+  <title>Sales Rep Workspace — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -48,8 +48,8 @@
                 <i class="fa-solid fa-indian-rupee-sign"></i>
               </div>
               <div>
-                <h3 style="font-size: 1rem; font-weight: 800; color: var(--slate-900); margin: 0;">My Placement Fee & Cash Inflow Target</h3>
-                <span style="font-size: 0.75rem; color: var(--slate-500);">Placement fees contracted and collected across your assigned students</span>
+                <h3 style="font-size: 1rem; font-weight: 800; color: var(--slate-900); margin: 0;">My Placement Fee & Cash Inflow</h3>
+                <span style="font-size: 0.75rem; color: var(--slate-500);">Placement fees contracted and collected across your assigned leads</span>
               </div>
             </div>
             <a href="customers.html" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">
@@ -83,6 +83,71 @@
                 <div id="rep-fee-rate-bar" style="height: 100%; width: 0%; background: #8b5cf6;"></div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Revenue Target & 4-Week Milestone Roadmap Card -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: #ffffff; border: 1.5px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <!-- Card Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                <i class="fa-solid fa-bullseye"></i>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--slate-900); margin: 0;">My Revenue Target & 4-Week Milestone Roadmap</h3>
+                  <span class="badge" id="rep-target-month-badge" style="background: #f1f5f9; color: #475569; font-weight: 700;">October 2026</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--slate-500);">Monthly revenue target broken into 4 weekly performance milestones</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn btn-primary btn-sm" id="btn-open-target-modal" style="display: none; font-size: 0.78rem;">
+                <i class="fa-solid fa-pen-to-square"></i> Admin: Update Target
+              </button>
+            </div>
+          </div>
+
+          <!-- Monthly High-Level Target Summary Strip -->
+          <div style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 0.75rem;">
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Monthly Target</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); line-height: 1.2;" id="rep-monthly-target-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--success-text); text-transform: uppercase; letter-spacing: 0.05em;">Revenue Achieved</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--success-solid); line-height: 1.2;" id="rep-monthly-achieved-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Remaining to Target</span>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--warning-solid); line-height: 1.2;" id="rep-monthly-remaining-amt">₹0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em;">Achievement Status</span>
+                <div style="margin-top: 0.2rem;" id="rep-monthly-status-badge">
+                  <span class="badge badge-stage-interested">In Progress</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem;">
+                <span style="color: var(--slate-600);">Monthly Target Realization</span>
+                <span id="rep-monthly-percent-label" style="color: var(--primary-700);">0.0%</span>
+              </div>
+              <div style="height: 8px; background: rgba(0,0,0,0.08); border-radius: 9999px; overflow: hidden;">
+                <div id="rep-monthly-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 9999px; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Week Milestone Cards Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.85rem;" id="rep-weeks-container">
+            <!-- Populated dynamically via Targets.getUserRevenueProgress -->
           </div>
         </div>
 
@@ -135,7 +200,7 @@
 
           <div class="kpi-card kpi-success">
             <div class="kpi-info">
-              <span class="kpi-label">My Converted Deals</span>
+              <span class="kpi-label">My Enrolled Leads</span>
               <span class="kpi-value" id="kpi-my-converted">0</span>
               <span class="kpi-subtext" style="color: var(--success-solid); font-size: 0.75rem;" id="kpi-my-rate">0% closed</span>
             </div>
@@ -211,12 +276,76 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
+  <script src="../js/targets.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/app.js"></script>
 
   <script>
+    function renderRevenueTargets(userId) {
+      if (!window.Targets) return;
+      const currentMonth = Targets.getCurrentMonth();
+      const progress = Targets.getUserRevenueProgress(userId, currentMonth);
+      if (!progress) return;
+
+      const [year, monthNum] = currentMonth.split('-');
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthLabel = `${monthNames[parseInt(monthNum, 10) - 1]} ${year}`;
+
+      const monthBadge = document.getElementById('rep-target-month-badge');
+      if (monthBadge) monthBadge.textContent = monthLabel;
+
+      document.getElementById('rep-monthly-target-amt').textContent = Targets.formatCurrency(progress.monthlyTarget);
+      document.getElementById('rep-monthly-achieved-amt').textContent = Targets.formatCurrency(progress.monthlyAchieved);
+      document.getElementById('rep-monthly-remaining-amt').textContent = Targets.formatCurrency(progress.monthlyRemaining);
+      document.getElementById('rep-monthly-percent-label').textContent = `${progress.monthlyPercent}% (${Targets.formatCurrency(progress.monthlyAchieved)} of ${Targets.formatCurrency(progress.monthlyTarget)})`;
+      document.getElementById('rep-monthly-progress-bar').style.width = `${Math.min(100, progress.monthlyPercent)}%`;
+      document.getElementById('rep-monthly-status-badge').innerHTML = `<span class="badge ${progress.monthlyStatusClass}">${progress.monthlyStatus}</span>`;
+
+      // Render 4-Week Milestone Cards
+      const weeksContainer = document.getElementById('rep-weeks-container');
+      if (weeksContainer) {
+        weeksContainer.innerHTML = progress.weeks.map(w => {
+          const isCurr = w.isCurrentWeek;
+          return `
+            <div style="background: white; border: ${isCurr ? '2px solid var(--primary-500)' : '1px solid var(--border-light)'}; border-radius: var(--radius-lg); padding: 0.9rem 1rem; position: relative; ${isCurr ? 'box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);' : ''}">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 800; font-size: 0.88rem; color: var(--slate-900);">${w.label}</span>
+                <span style="font-size: 0.7rem; color: var(--slate-500); background: var(--slate-100); padding: 0.15rem 0.45rem; border-radius: 4px;">${w.dateRange}</span>
+              </div>
+              ${isCurr ? `
+                <div style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 0.1rem 0.4rem; border-radius: 9999px; margin-bottom: 0.4rem;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; display: inline-block;"></span> Current Week
+                </div>
+              ` : ''}
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.72rem; color: var(--slate-500); text-transform: uppercase; font-weight: 700;">Target</span>
+                <span style="font-size: 0.95rem; font-weight: 800; color: var(--slate-900);">${Targets.formatCurrency(w.target)}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.72rem; color: var(--success-text); text-transform: uppercase; font-weight: 700;">Achieved</span>
+                <span style="font-size: 1rem; font-weight: 800; color: var(--success-solid);">${Targets.formatCurrency(w.achieved)}</span>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: var(--slate-600); margin-bottom: 0.2rem;">
+                  <span>Progress</span>
+                  <span>${w.percent}%</span>
+                </div>
+                <div style="height: 6px; background: var(--slate-100); border-radius: 9999px; overflow: hidden;">
+                  <div style="height: 100%; width: ${Math.min(100, w.percent)}%; background: ${w.percent >= 100 ? 'var(--success-solid)' : (w.percent >= 50 ? 'var(--primary-600)' : 'var(--warning-solid)')}; border-radius: 9999px;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem;">
+                <span style="color: var(--slate-400);">${w.paymentCount} payments</span>
+                <span class="badge ${w.statusClass}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">${w.status}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Guard page
       if (!Auth.requireAuth(['sales', 'manager', 'admin'])) return;
@@ -238,11 +367,31 @@
       document.getElementById('rep-fee-rate').textContent = `${myFeeSummary.collectionRate}%`;
       document.getElementById('rep-fee-rate-bar').style.width = `${Math.min(100, myFeeSummary.collectionRate)}%`;
 
+      // Render Revenue Targets (Monthly + 4 Weeks)
+      renderRevenueTargets(currentUser.id);
+
+      // If user is Admin or Manager, show update target button
+      const targetBtn = document.getElementById('btn-open-target-modal');
+      if (targetBtn && (currentUser.role === 'admin' || currentUser.role === 'manager')) {
+        targetBtn.style.display = 'inline-flex';
+        targetBtn.addEventListener('click', () => {
+          Targets.openUpdateModal(currentUser.id, () => {
+            renderRevenueTargets(currentUser.id);
+          });
+        });
+      }
+
+      window.addEventListener('crmTargetsUpdated', (e) => {
+        if (!e.detail || String(e.detail.userId) === String(currentUser.id)) {
+          renderRevenueTargets(currentUser.id);
+        }
+      });
+
       let interested = 0, prospects = 0, converted = 0;
       myCustomers.forEach(c => {
         if (c.stage === 'Interested') interested++;
         else if (c.stage === 'Prospect') prospects++;
-        else if (c.stage === 'Converted') converted++;
+        else if (c.stage === 'Enrolled' || c.stage === 'Converted') converted++;
       });
 
       document.getElementById('kpi-my-interested').textContent = interested;
@@ -250,7 +399,7 @@
       document.getElementById('kpi-my-converted').textContent = converted;
 
       const rate = myCustomers.length > 0 ? ((converted / myCustomers.length) * 100).toFixed(1) : 0;
-      document.getElementById('kpi-my-rate').textContent = `${rate}% conversion`;
+      document.getElementById('kpi-my-rate').textContent = `${rate}% enrollment`;
 
       // 3. Follow-up statistics
       const cats = Followups.getCategorized(true);

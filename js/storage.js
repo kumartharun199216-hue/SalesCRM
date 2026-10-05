@@ -15,7 +15,9 @@ const CRM_STORAGE_KEYS = {
   SETTINGS: 'crm_settings',
   CURRENT_USER: 'crm_current_user',
   COUNTERS: 'crm_counters',
-  PAYMENTS: 'crm_payments'
+  PAYMENTS: 'crm_payments',
+  TARGETS: 'crm_targets',
+  TEMPLATES: 'crm_templates'
 };
 
 const StorageService = {
@@ -87,15 +89,16 @@ const StorageService = {
 
   /**
    * Generate sequential human-readable CRM IDs
-   * Example: CRM-CUST-000001, CRM-ACT-000001, CRM-FLW-000001
+   * Example: SM-LD-0001, CRM-ACT-000001, CRM-FLW-000001
    */
-  generateId(prefix = 'CRM') {
+  generateId(prefix = 'SM-LD') {
     const counters = this.getData(CRM_STORAGE_KEYS.COUNTERS, {});
     const currentCount = (counters[prefix] || 0) + 1;
     counters[prefix] = currentCount;
     this.saveData(CRM_STORAGE_KEYS.COUNTERS, counters);
 
-    const paddedNumber = String(currentCount).padStart(6, '0');
+    const padLength = (prefix.toUpperCase() === 'SM-LD' || prefix.toLowerCase() === 'sm-ld') ? 4 : 6;
+    const paddedNumber = String(currentCount).padStart(padLength, '0');
     return `${prefix}-${paddedNumber}`;
   }
 };

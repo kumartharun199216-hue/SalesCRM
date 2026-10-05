@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Career Pipeline (Excel Sheet View) — Career Apex CRM</title>
+  <title>Lead Pipeline (Excel Sheet View) — Skill Move CRM</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -107,11 +107,11 @@
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
           <div>
             <div style="display: flex; align-items: center; gap: 0.65rem;">
-              <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em;">Student Career Pipeline</h1>
+              <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em;">Lead Pipeline</h1>
               <span class="badge badge-priority-medium" id="active-stage-indicator">All Candidates</span>
             </div>
             <p style="color: var(--slate-500); font-size: 0.85rem; margin-top: 0.15rem;">
-              Excel-style spreadsheet view tracking student job seekers, qualifications, career stages, counselor assignments, and placement follow-ups.
+              Excel-style spreadsheet view tracking leads, qualifications, career stages, counselor assignments, and placement follow-ups.
             </p>
           </div>
           <div style="display: flex; gap: 0.65rem; align-items: center;">
@@ -122,7 +122,7 @@
               <i class="fa-solid fa-file-excel" style="color: #107c41;"></i> Export Excel / CSV
             </button>
             <button class="btn btn-primary btn-sm" onclick="document.getElementById('global-add-customer-btn').click()">
-              <i class="fa-solid fa-user-plus"></i> Register Student
+              <i class="fa-solid fa-user-plus"></i> Add Lead
             </button>
           </div>
         </div>
@@ -139,7 +139,7 @@
             <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 440px;">
               <div style="position: relative; width: 100%;">
                 <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem;"></i>
-                <input type="text" id="excel-search" class="form-control" placeholder="Quick filter by student, degree, college, skills, role, city..." style="font-size: 0.825rem; padding: 0.45rem 0.85rem 0.45rem 2.25rem;">
+                <input type="text" id="excel-search" class="form-control" placeholder="Quick filter by lead, degree, college, skills, role, city..." style="font-size: 0.825rem; padding: 0.45rem 0.85rem 0.45rem 2.25rem;">
               </div>
             </div>
 
@@ -184,8 +184,8 @@
               <thead>
                 <tr>
                   <th class="row-index-header">#</th>
-                  <th>Student ID</th>
-                  <th>Student Name</th>
+                  <th>Lead ID</th>
+                  <th>Lead Name</th>
                   <th>Degree / Qualification</th>
                   <th>College / University</th>
                   <th>YOP</th>
@@ -197,6 +197,7 @@
                   <th>Pipeline Stage</th>
                   <th>Priority</th>
                   <th>Status</th>
+                  <th>Estimated Revenue</th>
                   <th>Placement Fee</th>
                   <th>Career Counselor</th>
                   <th>City / Location</th>
@@ -214,7 +215,7 @@
           <div class="excel-status-bar">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <span><i class="fa-solid fa-check" style="color: var(--success-solid); margin-right: 0.35rem;"></i> READY</span>
-              <span>Showing: <strong id="status-row-count">0</strong> students</span>
+              <span>Showing: <strong id="status-row-count">0</strong> leads</span>
               <span id="status-stage-label" style="color: var(--primary-600); font-weight: 600;">Stage: All Candidates</span>
             </div>
             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -292,6 +293,7 @@
   <script src="../js/leads.js"></script>
   <script src="../js/pipeline.js"></script>
   <script src="../js/followups.js"></script>
+  <script src="../js/templates.js"></script>
   <script src="../js/communication.js"></script>
   <script src="../js/reports.js"></script>
   <script src="../js/auth.js"></script>
@@ -378,13 +380,15 @@
     function getStageIcon(stage) {
       const s = stage.toLowerCase();
       if (s.includes('cold')) return 'fa-phone-slash';
+      if (s.includes('notconnect')) return 'fa-phone-flip';
       if (s.includes('new')) return 'fa-sparkles';
       if (s.includes('contact')) return 'fa-phone';
-      if (s.includes('interest')) return 'fa-fire';
+      if (s.includes('interest') && !s.includes('not')) return 'fa-fire';
       if (s.includes('prospect')) return 'fa-bullseye';
       if (s.includes('follow')) return 'fa-clock';
       if (s.includes('negotiat')) return 'fa-handshake';
-      if (s.includes('convert')) return 'fa-trophy';
+      if (s.includes('closure') || s.includes('pendingclosure')) return 'fa-file-invoice-dollar';
+      if (s.includes('enroll') || s.includes('convert')) return 'fa-trophy';
       if (s.includes('not')) return 'fa-ban';
       return 'fa-circle-xmark';
     }
@@ -414,7 +418,7 @@
 
       let customers = Customers.getScopedCustomers();
       const totalAll = customers.length;
-      const convertedTotal = customers.filter(c => c.stage === 'Converted').length;
+      const convertedTotal = customers.filter(c => c.stage === 'Enrolled' || c.stage === 'Converted').length;
 
       // Filter by Stage
       if (currentSelectedStage !== 'all') {
@@ -486,8 +490,8 @@
       if (!leads.length) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="18" style="text-align: center; color: var(--slate-400); padding: 3rem;">
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem;">No students found in this pipeline sheet</div>
+            <td colspan="19" style="text-align: center; color: var(--slate-400); padding: 3rem;">
+              <div style="font-size: 1.1rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem;">No leads found in this pipeline sheet</div>
               <div style="font-size: 0.85rem;">Try selecting another stage from the top pill bar or clearing search filters.</div>
             </td>
           </tr>
@@ -500,14 +504,14 @@
           <!-- Row Number Column like Excel -->
           <td class="row-index-cell">${index + 1}</td>
 
-          <!-- Student ID -->
+          <!-- Lead ID -->
           <td style="font-weight: 700;">
-            <a href="customer-details.html?id=${c.id}" style="color: var(--primary-600); text-decoration: none;" title="Open Student Profile">
+            <a href="customer-details.html?id=${c.id}" style="color: var(--primary-600); text-decoration: none;" title="Open Lead Profile">
               ${c.id}
             </a>
           </td>
 
-          <!-- Student Name -->
+          <!-- Lead Name -->
           <td>
             <a href="customer-details.html?id=${c.id}" style="font-weight: 700; color: var(--slate-900); text-decoration: none;">
               ${Utils.escapeHtml(c.name)}
@@ -556,7 +560,7 @@
           <!-- Quick Connect Buttons -->
           <td>
             <div style="display: flex; gap: 0.35rem; align-items: center;">
-              <button class="cell-action-btn" onclick="Communication.initiateCall('${c.id}')" title="Call Student & Record Outcome" style="color: var(--success-solid);">
+              <button class="cell-action-btn" onclick="Communication.initiateCall('${c.id}')" title="Call Lead & Record Outcome" style="color: var(--success-solid);">
                 <i class="fa-solid fa-phone"></i>
               </button>
               <button class="cell-action-btn" onclick="Communication.openWhatsApp('${c.id}')" title="Open WhatsApp (+91)" style="color: #25d366;">
@@ -581,6 +585,21 @@
 
           <!-- Status -->
           <td>${Utils.getStatusBadge(c.status)}</td>
+
+          <!-- Estimated Revenue (Highlight for Pending Closure) -->
+          <td>
+            ${c.stage === 'Pending Closure' || c.estimatedRevenue ? `
+              <div style="font-weight: 700; color: #b45309; font-size: 0.825rem; display: flex; align-items: center; gap: 0.35rem;">
+                <span>${Payments.formatCurrency(c.estimatedRevenue || c.totalFee || 45000)}</span>
+                <button class="cell-action-btn" onclick="Pipeline.openStageModal('${c.id}', 'Pending Closure', onStageUpdated)" title="Edit Estimated Revenue" style="padding: 0.15rem 0.35rem; font-size: 0.65rem; color: #b45309;">
+                  <i class="fa-solid fa-pencil"></i>
+                </button>
+              </div>
+              <span class="badge badge-stage-pending-closure" style="font-size: 0.68rem; padding: 0.1rem 0.35rem; margin-top: 0.2rem; display: inline-block;">Closure Est.</span>
+            ` : `
+              <span style="color: var(--slate-400); font-size: 0.8rem;">—</span>
+            `}
+          </td>
 
           <!-- Placement Fee & Due -->
           <td style="white-space: nowrap;">
@@ -612,7 +631,7 @@
           <!-- Fixed Pipeline Actions Column -->
           <td style="position: sticky; right: 0; background-color: #fff; z-index: 5; text-align: center; box-shadow: -3px 0 6px rgba(0,0,0,0.03);">
             <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
-              <a href="customer-details.html?id=${c.id}" class="cell-action-btn" title="View Full Student Profile">
+              <a href="customer-details.html?id=${c.id}" class="cell-action-btn" title="View Full Lead Profile">
                 <i class="fa-solid fa-eye"></i>
               </a>
               <button class="cell-action-btn" onclick="Pipeline.openStageModal('${c.id}', null, onStageUpdated)" title="Change Stage">
@@ -765,8 +784,8 @@
 
       const rows = displayedLeads.map((c, i) => ({
         RowIndex: i + 1,
-        StudentID: c.id,
-        StudentName: c.name,
+        LeadID: c.id,
+        LeadName: c.name,
         Qualification: c.qualification || '',
         College: c.college || '',
         PassingYear: c.passingYear || '',
@@ -783,6 +802,10 @@
         Stage: c.stage,
         Status: c.status,
         Priority: c.priority,
+        EstimatedRevenue: c.estimatedRevenue || (c.stage === 'Pending Closure' ? c.totalFee || 0 : ''),
+        PlacementFee: c.totalFee || 0,
+        PaidAmount: c.paidAmount || 0,
+        PendingDue: c.pendingAmount || 0,
         Counselor: c.salespersonName || '',
         Manager: c.managerName || '',
         Source: c.source || '',
@@ -790,9 +813,9 @@
         LastContacted: Utils.formatDate(c.lastContacted)
       }));
 
-      const filename = `Student_Pipeline_Excel_${currentSelectedStage.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`;
+      const filename = `Lead_Pipeline_Excel_${currentSelectedStage.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`;
       Utils.exportToCsv(filename, rows);
-      Toast.success(`Exported ${displayedLeads.length} student records.`);
+      Toast.success(`Exported ${displayedLeads.length} lead records.`);
     }
   </script>
 </body>

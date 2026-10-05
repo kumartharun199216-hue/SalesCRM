@@ -81,6 +81,7 @@ const Reports = {
         name: c.name,
         managerName: c.managerName || '—',
         avatar: c.avatar,
+        leadCount: custs.length,
         studentCount: custs.length,
         bookedFee: booked,
         collectedFee: collected,
@@ -206,9 +207,11 @@ const Reports = {
       const contacted = repCustomers.filter(c => c.stage === 'Contacted' || c.lastContacted).length;
       const interested = repCustomers.filter(c => c.stage === 'Interested').length;
       const prospects = repCustomers.filter(c => c.stage === 'Prospect').length;
-      const converted = repCustomers.filter(c => c.stage === 'Converted' || c.status === 'Converted').length;
+      const pendingClosure = repCustomers.filter(c => c.stage === 'Pending Closure' || c.status === 'Pending Closure').length;
+      const converted = repCustomers.filter(c => c.stage === 'Enrolled' || c.stage === 'Converted' || c.status === 'Enrolled' || c.status === 'Converted').length;
       const notInterested = repCustomers.filter(c => c.stage === 'Not Interested' || c.status === 'Not Interested').length;
       const lost = repCustomers.filter(c => c.stage === 'Lost' || c.status === 'Lost').length;
+      const notConnected = repCustomers.filter(c => c.stage === 'Not Connected' || c.status === 'Not Connected').length;
       const completedFollowups = repFollowups.filter(f => f.status === 'Completed').length;
 
       const bookedFee = repCustomers.reduce((sum, c) => sum + (Number(c.totalFee) || 0), 0);
@@ -226,9 +229,12 @@ const Reports = {
         callsMade: repCalls.length,
         interestedCount: interested,
         prospectsCount: prospects,
+        pendingClosureCount: pendingClosure,
+        enrolledCount: converted,
+        convertedCount: converted,
+        notConnectedCount: notConnected,
         followupsScheduled: repFollowups.length,
         followupsCompleted: completedFollowups,
-        convertedCount: converted,
         notInterestedCount: notInterested,
         lostCount: lost,
         bookedFee,
@@ -251,11 +257,13 @@ const Reports = {
 
     let totalLeads = customers.length;
     let newLeads = 0;
+    let notConnected = 0;
     let contacted = 0;
     let interested = 0;
     let prospects = 0;
     let followupsInStage = 0;
     let negotiation = 0;
+    let pendingClosure = 0;
     let converted = 0;
     let notInterested = 0;
     let lost = 0;
@@ -267,12 +275,14 @@ const Reports = {
     customers.forEach(c => {
       const stage = (c.stage || '').toLowerCase();
       if (stage === 'new lead' || stage === 'cold calling') newLeads++;
+      else if (stage === 'not connected') notConnected++;
       else if (stage === 'contacted') contacted++;
       else if (stage === 'interested') interested++;
       else if (stage === 'prospect') prospects++;
       else if (stage === 'follow-up') followupsInStage++;
       else if (stage === 'negotiation') negotiation++;
-      else if (stage === 'converted') converted++;
+      else if (stage === 'pending closure') pendingClosure++;
+      else if (stage === 'enrolled' || stage === 'converted') converted++;
       else if (stage === 'not interested') notInterested++;
       else if (stage === 'lost') lost++;
 
@@ -309,7 +319,10 @@ const Reports = {
       prospects,
       followupsInStage,
       negotiation,
+      pendingClosure,
+      enrolled: converted,
       converted,
+      notConnected,
       notInterested,
       lost,
       todayFollowups,
