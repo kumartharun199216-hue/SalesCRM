@@ -42,6 +42,9 @@
           </div>
         </div>
 
+        <!-- Daily Leading Activity Scorecard Container -->
+        <div id="daily-effort-scorecard-container"></div>
+
         <!-- Placement Fee & Revenue Intelligence Summary Strip -->
         <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid var(--primary-100);">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -478,6 +481,11 @@
 
       // 3. Render Company Revenue Targets & 4-Week Roadmap
       renderCompanyRevenueTargets();
+
+      // Render Daily Activity Scorecard
+      if (window.App && typeof App.renderDailyActivityScorecard === 'function') {
+        App.renderDailyActivityScorecard('daily-effort-scorecard-container', Auth.getCurrentUser());
+      }
 
       const adminUpdateTargetsBtn = document.getElementById('btn-admin-manage-targets');
       if (adminUpdateTargetsBtn) {

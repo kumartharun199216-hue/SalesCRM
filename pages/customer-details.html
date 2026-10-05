@@ -100,6 +100,8 @@
                     Lead Name
                   </h1>
                   <span id="hero-stage-badge"></span>
+                  <span id="hero-sla-badge"></span>
+                  <span id="hero-stage-duration-badge"></span>
                   <span id="hero-status-badge"></span>
                   <span id="hero-priority-badge"></span>
                 </div>
@@ -114,6 +116,10 @@
               <!-- Edit All Details Button -->
               <button class="btn btn-primary" id="btn-hero-edit-lead" onclick="openEditLeadModal()" style="background: var(--primary-600); font-weight: 700;">
                 <i class="fa-solid fa-user-pen"></i> Edit Profile
+              </button>
+
+              <button class="btn btn-secondary" id="btn-action-upi-qr" onclick="if(currentCustomer) App.openPaymentQrModal(currentCustomer.id)" style="color: #7c3aed; border-color: #ddd6fe; background-color: #f5f3ff; font-weight: 700;">
+                <i class="fa-solid fa-qrcode"></i> Instant UPI QR
               </button>
 
               <button class="btn btn-secondary" id="btn-action-call" style="color: var(--success-solid); border-color: var(--success-border); background-color: var(--success-bg);">
@@ -138,6 +144,7 @@
                 <i class="fa-solid fa-calendar-plus"></i> Schedule Follow-up
               </button>
             </div>
+            <div id="hero-quick-call-container" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 0.5rem;"></div>
           </div>
 
           <!-- Hero Bottom Meta Grid -->
@@ -1048,10 +1055,15 @@
       if (el('hero-avatar-init')) el('hero-avatar-init').textContent = initials;
 
       if (el('hero-stage-badge')) el('hero-stage-badge').innerHTML = Utils.getStageBadge(c.stage);
+      if (el('hero-sla-badge')) el('hero-sla-badge').innerHTML = Utils.getSlaBadge(c);
+      if (el('hero-stage-duration-badge')) el('hero-stage-duration-badge').innerHTML = Utils.getStageDurationBadge(c);
+      if (el('hero-quick-call-container') && window.App && typeof App.renderQuickCallBar === 'function') {
+        el('hero-quick-call-container').innerHTML = App.renderQuickCallBar(c.id);
+      }
       if (el('hero-status-badge')) el('hero-status-badge').innerHTML = Utils.getStatusBadge(c.status);
       if (el('hero-priority-badge')) el('hero-priority-badge').innerHTML = Utils.getPriorityBadge(c.priority);
 
-      if (el('meta-phone')) el('meta-phone').textContent = c.mobile || '—';
+      if (el('meta-phone')) el('meta-phone').textContent = Utils.maskPhone(c.mobile);
       if (el('meta-email')) el('meta-email').textContent = c.email || '—';
       if (el('meta-target-role')) el('meta-target-role').textContent = c.targetRole || 'Software Engineer';
       if (el('meta-salesperson')) el('meta-salesperson').textContent = c.salespersonName || 'Unassigned';
@@ -1072,8 +1084,8 @@
       if (el('det-college')) el('det-college').textContent = c.college || '—';
       if (el('det-yop')) el('det-yop').textContent = c.passingYear || '—';
       if (el('det-cgpa')) el('det-cgpa').textContent = c.cgpaOrPercentage || '—';
-      if (el('det-mobile')) el('det-mobile').textContent = c.mobile || '—';
-      if (el('det-alt-mobile')) el('det-alt-mobile').textContent = c.altMobile || '—';
+      if (el('det-mobile')) el('det-mobile').textContent = Utils.maskPhone(c.mobile);
+      if (el('det-alt-mobile')) el('det-alt-mobile').textContent = Utils.maskPhone(c.altMobile);
       if (el('det-email')) el('det-email').textContent = c.email || '—';
       if (el('det-city-state')) el('det-city-state').textContent = `${c.city || '—'}, ${c.state || '—'}`;
       if (el('det-address')) el('det-address').textContent = c.address || '—';

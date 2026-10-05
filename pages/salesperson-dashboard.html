@@ -40,6 +40,9 @@
           </div>
         </div>
 
+        <!-- Daily Leading Activity Scorecard Container -->
+        <div id="daily-effort-scorecard-container"></div>
+
         <!-- Personal Placement Fee & Cash Collection Strip -->
         <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid var(--primary-100);">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -370,6 +373,11 @@
       // Render Revenue Targets (Monthly + 4 Weeks)
       renderRevenueTargets(currentUser.id);
 
+      // Render Daily Activity Scorecard
+      if (window.App && typeof App.renderDailyActivityScorecard === 'function') {
+        App.renderDailyActivityScorecard('daily-effort-scorecard-container', currentUser);
+      }
+
       // If user is Admin or Manager, show update target button
       const targetBtn = document.getElementById('btn-open-target-modal');
       if (targetBtn && (currentUser.role === 'admin' || currentUser.role === 'manager')) {
@@ -430,6 +438,9 @@
               </div>
               <div style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.65rem; line-height: 1.4;">
                 ${Utils.escapeHtml(f.purpose)}
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                ${window.App && typeof App.renderQuickCallBar === 'function' ? App.renderQuickCallBar(f.customerId) : ''}
               </div>
               <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 <button class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="Communication.initiateCall('${f.customerId}')">

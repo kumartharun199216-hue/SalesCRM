@@ -168,6 +168,62 @@ const Utils = {
   },
 
   /**
+   * Role-aware phone number masking (hides sensitive lead numbers from Sales role to prevent database theft)
+   */
+  maskPhone(phone, user = null) {
+    if (!phone) return '—';
+    const currentUser = user || (window.Auth && typeof Auth.getCurrentUser === 'function' ? Auth.getCurrentUser() : null);
+    const role = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : 'sales';
+    
+    // Admin and Manager can see full phone number
+    if (role === 'admin' || role === 'manager') {
+      return this.escapeHtml(phone);
+    }
+
+    // Sales role sees masked phone: 9820 ••••• 23
+    const cleaned = String(phone).trim();
+    if (cleaned.length >= 10) {
+      return `${cleaned.slice(0, 4)} ••••• ${cleaned.slice(-2)}`;
+    }
+    return '••••••••••';
+  },
+
+  /**
+   * SLA Breach Badge (>48 hours untouched in active counseling stage)
+   */
+  getSlaBadge(lead) {
+    if (!lead) return '';
+    const activeStages = ['cold calling', 'new lead', 'not connected', 'contacted', 'interested', 'follow-up', 'negotiation', 'prospect'];
+    const currentStage = (lead.stage || '').toLowerCase();
+    if (!activeStages.some(s => currentStage.includes(s))) {
+      return '';
+    }
+
+    // Check last update / contact time
+    const updatedTime = lead.updatedAt ? new Date(lead.updatedAt).getTime() : (lead.createdAt ? new Date(lead.createdAt).getTime() : 0);
+    const hoursElapsed = (Date.now() - updatedTime) / (1000 * 60 * 60);
+
+    if (hoursElapsed > 48 || lead.isSlaBreached) {
+      return `<span class="badge" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-weight: 700; font-size: 0.68rem;" title="Untouched for over 48 hours! Immediate action required."><i class="fa-solid fa-triangle-exclamation"></i> SLA BREACH (>48h)</span>`;
+    }
+    return '';
+  },
+
+  /**
+   * Stage Duration / Velocity Badge (tracks how many days lead is stuck in current stage)
+   */
+  getStageDurationBadge(lead) {
+    if (!lead) return '';
+    const updatedTime = lead.updatedAt ? new Date(lead.updatedAt).getTime() : (lead.createdAt ? new Date(lead.createdAt).getTime() : Date.now());
+    const days = Math.max(1, Math.floor((Date.now() - updatedTime) / (1000 * 60 * 60 * 24)));
+    const isStalled = days >= 6;
+    const style = isStalled 
+      ? 'background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5;' 
+      : 'background: #f8fafc; color: var(--slate-600); border: 1px solid var(--border-light);';
+    return `<span class="badge" style="${style} font-size: 0.68rem; font-weight: 600;" title="Time spent in current stage"><i class="fa-regular fa-clock"></i> ${days}d in stage</span>`;
+  },
+
+  /**
    * Safe HTML string escape to avoid XSS
    */
   escapeHtml(str) {

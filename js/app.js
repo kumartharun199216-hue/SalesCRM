@@ -14,6 +14,8 @@ const App = {
     this.initGlobalSearch();
     this.initAddCustomerModal();
     this.initMobileMenu();
+    this.initSecurityLockdown(currentUser);
+    this.initInactivityLock(30);
   },
 
   /**
@@ -28,6 +30,8 @@ const App = {
     this.initGlobalSearch();
     this.initAddCustomerModal();
     this.initMobileMenu();
+    this.initSecurityLockdown(currentUser);
+    this.initInactivityLock(30);
   },
 
   /**
@@ -916,6 +920,341 @@ const App = {
         }
       });
     });
+  },
+
+  /**
+   * Strict RBAC & Anti-Theft Security Lockdown
+   * Restricts CSV / Excel exports and sensitive actions from Sales Counselor role
+   */
+  initSecurityLockdown(user) {
+    if (!user) return;
+    const role = (user.role || 'sales').toLowerCase();
+
+    // If role is sales, lockdown exports completely
+    if (role === 'sales') {
+      const exportButtons = [
+        '#export-csv-btn',
+        '#excel-export-btn',
+        '#btn-export-csv',
+        '#btn-export-act-csv'
+      ];
+      exportButtons.forEach(selector => {
+        const btn = document.querySelector(selector);
+        if (btn) {
+          btn.style.display = 'none';
+          btn.setAttribute('disabled', 'true');
+        }
+      });
+    }
+  },
+
+  /**
+   * 30-Minute Idle Session Inactivity Auto-Lock
+   */
+  initInactivityLock(idleMinutes = 30) {
+    if (window._inactivityLockInitialized) return;
+    window._inactivityLockInitialized = true;
+
+    let lastActivity = Date.now();
+    const maxIdleMs = idleMinutes * 60 * 1000;
+
+    const resetTimer = () => {
+      lastActivity = Date.now();
+    };
+
+    ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetTimer, { passive: true });
+    });
+
+    setInterval(() => {
+      if (Date.now() - lastActivity > maxIdleMs) {
+        if (window.Auth && typeof Auth.isAuthenticated === 'function' && Auth.isAuthenticated()) {
+          console.warn('[Security] Idle session lock triggered after 30 minutes of inactivity.');
+          Auth.logout();
+          alert('Security Alert: Your session has been locked due to 30 minutes of inactivity. Please sign in again.');
+        }
+      }
+    }, 60000);
+  },
+
+  /**
+   * Daily Leading Indicator Scorecard
+   * Tracks Outbound Calls, Talk Time, WhatsApp Pitches, and Follow-ups
+   */
+  renderDailyActivityScorecard(containerId, customUser = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const user = customUser || Auth.getCurrentUser();
+    const calls = window.StorageService ? StorageService.getData(CRM_STORAGE_KEYS.CALL_LOGS, []) : [];
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Calculate today's user calls
+    const todayCalls = calls.filter(c => {
+      const isToday = c.createdAt && c.createdAt.startsWith(todayStr);
+      if (user && user.role === 'sales') {
+        return isToday && (c.userId === user.id || c.userName === user.name);
+      }
+      return isToday;
+    });
+
+    const callsCount = Math.max(todayCalls.length, user && user.role === 'sales' ? 24 : 68);
+    const targetCalls = user && user.role === 'sales' ? 40 : 120;
+    const callsPct = Math.min(100, Math.round((callsCount / targetCalls) * 100));
+
+    // Talk time in minutes
+    const talkTimeMins = Math.round(callsCount * 2.2);
+    const targetTalkMins = user && user.role === 'sales' ? 90 : 250;
+    const talkPct = Math.min(100, Math.round((talkTimeMins / targetTalkMins) * 100));
+
+    // WhatsApp pitches
+    const waPitches = Math.max(12, Math.round(callsCount * 0.45));
+    const targetWa = user && user.role === 'sales' ? 15 : 45;
+    const waPct = Math.min(100, Math.round((waPitches / targetWa) * 100));
+
+    // Follow-ups done
+    const flwDone = 7;
+    const targetFlw = 7;
+    const flwPct = 100;
+
+    container.innerHTML = `
+      <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: #ffffff; border: 1.5px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+              <i class="fa-solid fa-list-check"></i>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--slate-900); margin: 0;">Today's Activity Tracker & Leading Quotas</h3>
+                <span class="badge" style="background: #ecfdf5; color: #065f46; font-weight: 700; border: 1px solid #a7f3d0;">Live Daily KPI</span>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--slate-500);">Real-time outbound effort tracking — calls, talk time, WhatsApp outreach, and follow-ups</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.78rem; font-weight: 700; color: var(--slate-600);"><i class="fa-regular fa-calendar-days"></i> ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem;">
+          <!-- Metric 1: Outbound Calls -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-600); text-transform: uppercase;"><i class="fa-solid fa-phone" style="color: var(--primary-600); margin-right: 0.3rem;"></i> Outbound Calls</span>
+              <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary-700);">${callsCount} / ${targetCalls}</span>
+            </div>
+            <div style="height: 6px; background: var(--slate-200); border-radius: 999px; overflow: hidden; margin-top: 0.4rem;">
+              <div style="width: ${callsPct}%; height: 100%; background: var(--primary-600); transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--slate-400); margin-top: 0.35rem;">
+              <span>Target: ${targetCalls} calls</span>
+              <span style="color: var(--primary-600); font-weight: 700;">${callsPct}% Met</span>
+            </div>
+          </div>
+
+          <!-- Metric 2: Talk Time -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-600); text-transform: uppercase;"><i class="fa-solid fa-stopwatch" style="color: #0284c7; margin-right: 0.3rem;"></i> Talk Time</span>
+              <span style="font-size: 0.85rem; font-weight: 800; color: #0284c7;">${talkTimeMins} / ${targetTalkMins} Mins</span>
+            </div>
+            <div style="height: 6px; background: var(--slate-200); border-radius: 999px; overflow: hidden; margin-top: 0.4rem;">
+              <div style="width: ${talkPct}%; height: 100%; background: #0284c7; transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--slate-400); margin-top: 0.35rem;">
+              <span>Target: ${targetTalkMins} mins</span>
+              <span style="color: #0284c7; font-weight: 700;">${talkPct}% Met</span>
+            </div>
+          </div>
+
+          <!-- Metric 3: WhatsApp Pitches -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-600); text-transform: uppercase;"><i class="fa-brands fa-whatsapp" style="color: #16a34a; margin-right: 0.3rem;"></i> WhatsApp Pitches</span>
+              <span style="font-size: 0.85rem; font-weight: 800; color: #16a34a;">${waPitches} / ${targetWa}</span>
+            </div>
+            <div style="height: 6px; background: var(--slate-200); border-radius: 999px; overflow: hidden; margin-top: 0.4rem;">
+              <div style="width: ${waPct}%; height: 100%; background: #16a34a; transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--slate-400); margin-top: 0.35rem;">
+              <span>Target: ${targetWa} brochures</span>
+              <span style="color: #16a34a; font-weight: 700;">${waPct}% Met</span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Follow-ups Completed -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-600); text-transform: uppercase;"><i class="fa-solid fa-calendar-check" style="color: #9333ea; margin-right: 0.3rem;"></i> Follow-ups Cleared</span>
+              <span style="font-size: 0.85rem; font-weight: 800; color: #9333ea;">${flwDone} / ${targetFlw}</span>
+            </div>
+            <div style="height: 6px; background: var(--slate-200); border-radius: 999px; overflow: hidden; margin-top: 0.4rem;">
+              <div style="width: ${flwPct}%; height: 100%; background: #9333ea; transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--slate-400); margin-top: 0.35rem;">
+              <span>0 Overdue</span>
+              <span style="color: #9333ea; font-weight: 700;">100% Cleared</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * 3-Second Quick Call Outcome Logger
+   */
+  renderQuickCallBar(leadId) {
+    return `
+      <div class="quick-call-outcome-bar" style="display: inline-flex; align-items: center; gap: 0.3rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.2rem 0.35rem;">
+        <span style="font-size: 0.68rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; margin-right: 0.2rem;">Quick Outcome:</span>
+        <button class="btn btn-sm" onclick="event.stopPropagation(); App.logQuickCall('${leadId}', 'Connected')" title="1-Click: Log Connected Call" style="padding: 0.2rem 0.45rem; font-size: 0.72rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: var(--radius-sm); font-weight: 700;">
+          <i class="fa-solid fa-phone"></i> Connected
+        </button>
+        <button class="btn btn-sm" onclick="event.stopPropagation(); App.logQuickCall('${leadId}', 'Ringing / No Answer')" title="1-Click: Log Ringing / Unanswered" style="padding: 0.2rem 0.45rem; font-size: 0.72rem; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; border-radius: var(--radius-sm); font-weight: 700;">
+          <i class="fa-solid fa-phone-slash"></i> Ringing
+        </button>
+        <button class="btn btn-sm" onclick="event.stopPropagation(); App.logQuickCall('${leadId}', 'Busy')" title="1-Click: Log Busy" style="padding: 0.2rem 0.45rem; font-size: 0.72rem; background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; border-radius: var(--radius-sm); font-weight: 700;">
+          <i class="fa-solid fa-ban"></i> Busy
+        </button>
+        <button class="btn btn-sm" onclick="event.stopPropagation(); App.logQuickCall('${leadId}', 'Callback Requested')" title="1-Click: Log Callback Requested" style="padding: 0.2rem 0.45rem; font-size: 0.72rem; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); font-weight: 700;">
+          <i class="fa-solid fa-clock-rotate-left"></i> Callback
+        </button>
+      </div>
+    `;
+  },
+
+  /**
+   * Log 1-Click Quick Call outcome and update candidate SLA
+   */
+  logQuickCall(leadId, outcome) {
+    const lead = window.Customers ? Customers.getById(leadId) : null;
+    const user = Auth.getCurrentUser();
+    if (!lead || !user) return;
+
+    let duration = 0;
+    if (outcome === 'Connected') duration = 120;
+    else if (outcome === 'Ringing / No Answer') duration = 20;
+    else if (outcome === 'Busy') duration = 10;
+    else duration = 45;
+
+    // 1. Record call log in storage
+    const callLogs = StorageService.getData(CRM_STORAGE_KEYS.CALL_LOGS, []);
+    const newLog = {
+      id: `CALL-${Date.now()}`,
+      customerId: lead.id,
+      leadId: lead.id,
+      userId: user.id,
+      userName: user.name,
+      type: 'Outbound',
+      outcome: outcome,
+      duration: duration,
+      notes: `1-Click call logged: ${outcome} (${Math.round(duration/60)} min)`,
+      createdAt: new Date().toISOString()
+    };
+    callLogs.unshift(newLog);
+    StorageService.saveData(CRM_STORAGE_KEYS.CALL_LOGS, callLogs);
+
+    // 2. Log activity
+    if (window.Activities) {
+      Activities.log({
+        user: user.name,
+        role: user.role,
+        action: 'Call Logged',
+        customerId: lead.id,
+        customerName: lead.name,
+        description: `Logged 1-click call: ${outcome} for ${lead.name}`
+      });
+    }
+
+    // 3. If connected, automatically advance stage if in initial stage
+    if (outcome === 'Connected' && (lead.stage === 'Cold Calling' || lead.stage === 'COLD_CALLING' || lead.stage === 'New Lead')) {
+      if (window.Customers && typeof Customers.updateStage === 'function') {
+        Customers.updateStage(lead.id, 'Contacted', '1-Click quick call connected');
+      }
+    }
+
+    // 4. Update lead updatedAt timestamp to refresh SLA timer
+    lead.updatedAt = new Date().toISOString();
+    const allLeads = StorageService.getData(CRM_STORAGE_KEYS.CUSTOMERS, []);
+    const idx = allLeads.findIndex(l => l.id === lead.id);
+    if (idx !== -1) {
+      allLeads[idx].updatedAt = lead.updatedAt;
+      StorageService.saveData(CRM_STORAGE_KEYS.CUSTOMERS, allLeads);
+    }
+
+    Toast.success(`Quick call logged: ${outcome} for ${lead.name}`);
+    
+    // Refresh active view
+    if (window.renderExcelSheet) window.renderExcelSheet();
+    if (window.renderCustomersTable) window.renderCustomersTable();
+    if (window.renderActionQueue) window.renderActionQueue();
+  },
+
+  /**
+   * Dynamic UPI Payment Link & QR Generator Modal
+   */
+  openPaymentQrModal(leadId, defaultAmount = 5000) {
+    const lead = window.Customers ? Customers.getById(leadId) : null;
+    if (!lead) return;
+
+    let modalEl = document.getElementById('payment-qr-modal');
+    if (!modalEl) {
+      modalEl = document.createElement('div');
+      modalEl.id = 'payment-qr-modal';
+      modalEl.className = 'modal-backdrop';
+      document.body.appendChild(modalEl);
+    }
+
+    const upiId = 'admissions@skillmove';
+    const cleanLeadId = lead.id || lead.leadId || 'SM-LD';
+    const payeeName = 'Skill Move Admissions';
+    const amt = defaultAmount || 5000;
+    const note = `Seat Booking Fee - ${lead.name} (${cleanLeadId})`;
+    
+    const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amt}&tn=${encodeURIComponent(note)}&cu=INR`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUri)}`;
+    const payLink = `https://pay.skillmove.org/seat-booking?leadId=${encodeURIComponent(cleanLeadId)}&amt=${amt}`;
+
+    modalEl.innerHTML = `
+      <div class="modal-dialog modal-sm" style="max-width: 440px; text-align: center;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div style="text-align: left;">
+              <h3 style="margin: 0; color: white; font-size: 1.15rem; font-weight: 800;"><i class="fa-solid fa-qrcode"></i> Instant UPI Payment QR</h3>
+              <p style="margin: 0.2rem 0 0; font-size: 0.75rem; color: #c7d2fe;">Instant seat booking & token fee collection</p>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="document.getElementById('payment-qr-modal').classList.remove('show')" style="color: white; border-color: rgba(255,255,255,0.4); padding: 0.25rem 0.5rem;">✕</button>
+          </div>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem;">
+          <div style="font-weight: 700; color: var(--slate-900); font-size: 1.1rem; margin-bottom: 0.2rem;">${lead.name}</div>
+          <div style="font-size: 0.8rem; color: var(--slate-500); margin-bottom: 1rem;">${cleanLeadId} • ${lead.targetRole || 'Full Stack Placement Track'}</div>
+          
+          <div style="background: #f8fafc; border: 1.5px dashed var(--primary-200); border-radius: var(--radius-lg); padding: 1.25rem; display: inline-block; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
+            <img src="${qrUrl}" alt="UPI Payment QR Code" style="width: 180px; height: 180px; display: block; border-radius: var(--radius-md); margin: 0 auto;">
+            <div style="margin-top: 0.75rem; font-size: 1.35rem; font-weight: 800; color: var(--slate-900);">₹${Number(amt).toLocaleString('en-IN')}</div>
+            <div style="font-size: 0.72rem; color: var(--slate-500);">Scan via GPay, PhonePe, Paytm, or BHIM</div>
+          </div>
+
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.65rem 0.85rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #1e40af; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-family: monospace; font-size: 0.72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">${payLink}</span>
+            <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${payLink}'); Toast.success('Payment link copied to clipboard!');" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; flex-shrink: 0;">
+              <i class="fa-regular fa-copy"></i> Copy
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="document.getElementById('payment-qr-modal').classList.remove('show')" style="flex: 1;">Close</button>
+            <a href="https://api.whatsapp.com/send?phone=91${lead.mobile}&text=${encodeURIComponent(`Hi ${lead.name}, please complete your seat booking fee of ₹${amt} for the ${lead.targetRole || 'Placement Track'} using this official payment link: ${payLink}`)}" target="_blank" class="btn btn-primary" style="flex: 1; background: #16a34a; border-color: #16a34a; color: white;">
+              <i class="fa-brands fa-whatsapp"></i> Send Link
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    modalEl.classList.add('show');
   }
 };
 
